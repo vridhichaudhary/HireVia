@@ -1,9 +1,10 @@
 import FeaturedJobs from '@/components/FeaturedJobs/FeaturedJobs';
 import HeroSection from '@/components/HeroSection/HeroSection'
 import Footer from '@/components/Footer/Footer'
+import Link from 'next/link';
 import React from 'react'
 
-import { FaSearch, FaTasks, FaRegSmile } from "react-icons/fa";
+import {FaSearch, FaTasks, FaRegSmile, FaRocket, FaUserShield, FaChartLine} from "react-icons/fa";
 
 const Home = () => {
   return (
@@ -50,6 +51,36 @@ const Home = () => {
               Customizable accessibility features to ensure everyone can use our platform
             </p>
           </div>
+
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="bg-[#56C8D8] rounded-full p-4">
+              <FaRocket className="text-2xl text-black" />
+            </div>
+            <h3 className="text-xl font-semibold">Real-time Scraping</h3>
+            <p className="text-gray-400 max-w-xs">
+              Get fresh job listings scraped in real-time from top platforms
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="bg-[#56C8D8] rounded-full p-4">
+              <FaUserShield className="text-2xl text-black" />
+            </div>
+            <h3 className="text-xl font-semibold">Privacy First</h3>
+            <p className="text-gray-400 max-w-xs">
+              Your personal data is always secure and never shared without your consent
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="bg-[#56C8D8] rounded-full p-4">
+              <FaChartLine className="text-2xl text-black" />
+            </div>
+            <h3 className="text-xl font-semibold">Insightful Analytics</h3>
+            <p className="text-gray-400 max-w-xs">
+              Track application performance and improve your job search strategy
+            </p>
+  </div>
         </div>
       </div>
     </section>
@@ -62,9 +93,11 @@ const Home = () => {
               <h3 className="text-2xl font-extrabold mb-2">Ready to find your next opportunity?</h3>
               <p>Create an account to track your applications and get personalized job recommendations</p>
             </div>
+            <Link href="/jobs">
             <button className="bg-[#2D2F38] hover:bg-[#3a3d49] text-white px-6 py-3 rounded-md transition">
               Get Started
             </button>
+            </Link>
           </div>
         </div>
       </section>

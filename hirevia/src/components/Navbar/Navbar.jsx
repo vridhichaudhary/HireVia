@@ -89,9 +89,9 @@ const Navbar = () => {
           ) : (
             <button
               onClick={() => openAuthForm(false)}
-              className="px-5 py-1.5 bg-[#56C8D8] text-white text-sm font-semibold rounded hover:bg-[#56c9d8c8] transition"
+              className="px-5 py-1.5 bg-[#56C8D8] text-white text-sm font-medium rounded hover:bg-[#56c9d8c8] transition"
             >
-              Login
+              Login / SignUp
             </button>
           )}
         </div>

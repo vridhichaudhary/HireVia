@@ -1,4 +1,6 @@
 import React from 'react';
+import Link from 'next/link';
+
 
 const jobs = [
   {
@@ -34,7 +36,7 @@ const jobs = [
     remote: true,
     posted: '03/05/2023',
     platform: 'Internshala',
-    salary: '₹15,000 - ₹25,000 per month',
+    salary: '₹15,000 - ₹25,000',
     applied: false,
   },
   {
@@ -59,22 +61,24 @@ const FeaturedJobs = () => {
           <h2 className="text-3xl font-semibold">Featured Jobs</h2>
           <p className="text-[#A0B7C2] mt-1">Explore our handpicked opportunities</p>
         </div>
-        <button className="border border-[#56C8D8] px-4 py-2 rounded-md text-sm hover:bg-[#56C8D8]/10 transition">View All Jobs</button>
+        <Link href="/jobs">
+        <button className="border border-[#56C8D8] px-4 py-2 rounded-md text-sm hover:bg-[#56C8D8]/10 transition">
+        View All Jobs
+        </button>
+        </Link>
+
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {jobs.map((job) => (
           <div
             key={job.id}
-            className="bg-[#111827] p-6 rounded-xl shadow-md border border-[#1f2937] hover:shadow-[0_0_15px_#56C8D8] hover:scale-[1.02] transition duration-300"
+            className="bg-[#111827] p-6 rounded-xl shadow-md border border-[#1f2937] hover:shadow-[0_0_5px_#56C8D8] hover:scale-[1.05] transition duration-300"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg font-medium">{job.title}</h3>
                 <p className="text-sm text-[#A0B7C2]">{job.company}</p>
-              </div>
-              <div className="w-8 h-8 flex items-center justify-center bg-[#1F2937] text-sm font-bold rounded-md text-white">
-                {job.company[0]}
               </div>
             </div>
 
@@ -108,7 +112,7 @@ const FeaturedJobs = () => {
                 className={`px-4 py-2 text-sm rounded-md ${
                   job.applied
                     ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                    : 'bg-[#56C8D8] hover:bg-[#74d6e4] transition text-black font-semibold'
+                    : 'bg-[#56C8D8] hover:bg-[#74d6e4] transition text-black font-medium text-sm'
                 }`}
                 disabled={job.applied}
               >
