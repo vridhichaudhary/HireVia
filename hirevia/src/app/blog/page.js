@@ -1,5 +1,6 @@
 import React from "react";
 import Image from 'next/image';
+import Footer from '@/components/Footer/Footer'
 
 const blogs = [
   {
@@ -102,7 +103,7 @@ const blogs = [
 
 const BlogSection = () => {
   return (
-    <section className="bg-[#0B0D14] text-[white] px-6 py-20 md:px-20">
+    <section className="bg-[#0B0D14] text-[white] px-6 py-12 md:px-20">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl font-bold mb-4">Career Blog</h2>
         <p className="text-[#A0B7C2] mb-10 text-lg">
@@ -120,7 +121,7 @@ const BlogSection = () => {
             />
           </div>
 
-          <div className="p-6 sm:p-10 flex flex-col gap-4">
+          <div className="p-6 sm:p-10 flex flex-col gap-4 mb-10">
             <span className="bg-[#70bdf5] text-white px-4 py-1 rounded-full text-sm font-medium w-fit">
               Featured
             </span>
@@ -172,8 +173,12 @@ const BlogSection = () => {
             </div>
           ))}
         </div>
+        </div>
+        <div className="mt-30">
+        <Footer />
       </div>
     </section>
+    
   );
 };
 

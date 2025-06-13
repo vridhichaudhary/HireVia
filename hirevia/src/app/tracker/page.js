@@ -42,7 +42,9 @@ const ApplicationTracker = () => {
             Search Jobs
           </button>
         </div>
-        <Footer/>
+        <div className="mt-30">
+          <Footer />
+        </div>
       </div>
     </section>
   );
