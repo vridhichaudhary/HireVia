@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Footer from "@/components/Footer/Footer";
+import { addTrackedJob, isJobTracked } from "@/utils/localStorageUtils";
 
 const JOBS_PER_PAGE = 5;
 
@@ -176,18 +177,21 @@ const allJobs = [
     posted: "06/05/2025",
     salary: "₹13,00,000 - ₹16,00,000",
   }
-]
+];
 
 const SearchJobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredJobs, setFilteredJobs] = useState(allJobs);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortType, setSortType] = useState("date");
+  const [addedJobs, setAddedJobs] = useState([]);
 
   const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
 
   useEffect(() => {
     applySearchAndSort();
+    const tracked = allJobs.filter((job) => isJobTracked(job.id));
+    setAddedJobs(tracked.map((j) => j.id));
   }, [searchQuery, sortType]);
 
   const applySearchAndSort = () => {
@@ -214,7 +218,14 @@ const SearchJobs = () => {
     }
 
     setFilteredJobs(jobs);
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
+  };
+
+  const handleTrack = (job) => {
+    if (!addedJobs.includes(job.id)) {
+      addTrackedJob({ ...job, status: "Offer", appliedOn: new Date().toISOString() });
+      setAddedJobs((prev) => [...prev, job.id]);
+    }
   };
 
   const displayedJobs = filteredJobs.slice(
@@ -228,7 +239,6 @@ const SearchJobs = () => {
 
   return (
     <div className="min-h-screen bg-[#0B0D14] text-white px-8 sm:px-16 py-10">
-      {/* Search + Sort Controls */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
         <input
           type="text"
@@ -237,7 +247,6 @@ const SearchJobs = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
         <select
           className="bg-[#11131c] border border-gray-700 text-white px-4 py-2 rounded"
           value={sortType}
@@ -248,7 +257,6 @@ const SearchJobs = () => {
         </select>
       </div>
 
-      {/* Job Cards */}
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
         {displayedJobs.map((job) => (
           <div
@@ -261,7 +269,6 @@ const SearchJobs = () => {
                 <p className="text-gray-400 text-sm">{job.company}</p>
               </div>
             </div>
-
             <div className="flex flex-wrap gap-2 mt-3 text-xs">
               <span className="bg-gray-700 px-2 py-1 rounded">{job.location}</span>
               <span className="bg-gray-700 px-2 py-1 rounded">{job.type}</span>
@@ -269,26 +276,28 @@ const SearchJobs = () => {
                 <span className="bg-[#56C8D8] px-2 py-1 rounded">Remote</span>
               )}
             </div>
-
             <div className="flex justify-between items-center mt-4 text-sm">
               <p className="text-gray-400">Posted {job.posted}</p>
-              <span
-                className={`text-white px-2 py-1 rounded text-xs ${platformColors[job.platform]}`}
-              >
+              <span className={`text-white px-2 py-1 rounded text-xs ${platformColors[job.platform]}`}>
                 {job.platform}
               </span>
             </div>
-
             <p className="mt-3">{job.salary}</p>
-
-            <button className="mt-4 w-full bg-[#56C8D8] hover:bg-[#56a8d8] text-white py-2 rounded-md text-sm font-medium">
-              Track Application
+            <button
+              onClick={() => handleTrack(job)}
+              disabled={addedJobs.includes(job.id)}
+              className={`mt-4 w-full ${
+                addedJobs.includes(job.id)
+                  ? "bg-gray-600 text-gray-300 cursor-not-allowed"
+                  : "bg-[#56C8D8] hover:bg-[#56a8d8] text-white"
+              } py-2 rounded-md text-sm font-medium`}
+            >
+              {addedJobs.includes(job.id) ? "Added to Tracker" : "Track Application"}
             </button>
           </div>
         ))}
       </div>
 
-      {/* Pagination */}
       <div className="flex justify-center mt-10 gap-4 text-sm">
         <button
           onClick={() => changePage(currentPage - 1)}

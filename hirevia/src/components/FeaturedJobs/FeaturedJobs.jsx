@@ -1,6 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
-
 
 const jobs = [
   {
@@ -61,12 +59,9 @@ const FeaturedJobs = () => {
           <h2 className="text-3xl font-semibold">Featured Jobs</h2>
           <p className="text-[#A0B7C2] mt-1">Explore our handpicked opportunities</p>
         </div>
-        <Link href="/jobs">
         <button className="border border-[#56C8D8] px-4 py-2 rounded-md text-sm hover:bg-[#56C8D8]/10 transition">
         View All Jobs
         </button>
-        </Link>
-
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
