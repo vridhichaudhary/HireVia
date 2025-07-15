@@ -36,7 +36,7 @@ const ApplicationTracker = () => {
             <p className="text-gray-400 max-w-md">
               Start tracking your job applications to manage your job search effectively
             </p>
-            <Link href="/searchjobs">
+            <Link href="/jobs">
             <button className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white px-6 py-2 rounded-md transition">
               Search Jobs
             </button>
