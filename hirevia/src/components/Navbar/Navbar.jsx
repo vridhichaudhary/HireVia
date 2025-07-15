@@ -82,22 +82,22 @@ const Navbar = () => {
       {/* NAVBAR COMPONENT */}
       <nav className="flex items-center justify-between px-6 py-3 bg-black/30 text-white shadow-md sticky top-0 z-40">
         <div className="text-2xl font-bold tracking-wide">
-          Hire<span className="text-[#56C8D8]">Via</span>
+          Hire<span className="text-[#8B5CF6]">Via</span>
         </div>
         <div className="md:hidden">
           <button onClick={toggleMenu}>
             {menuOpen ? (
-              <FaTimes className="text-2xl text-[#56C8D8]" />
+              <FaTimes className="text-2xl text-[#8B5CF6]" />
             ) : (
-              <FaBars className="text-2xl text-[#56C8D8]" />
+              <FaBars className="text-2xl text-[#8B5CF6]" />
             )}
           </button>
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm">
-          <Link href="/" className="hover:text-[#56C8D8] transition">Home</Link>
-          <Link href="/jobs" className="hover:text-[#56C8D8] transition">Search Jobs</Link>
-          <Link href="/tracker" className="hover:text-[#56C8D8] transition">ApplicationTracker</Link>
-          <Link href="/blog" className="hover:text-[#56C8D8] transition">Career Blog</Link>
+          <Link href="/" className="hover:text-[#7C3AED] transition">Home</Link>
+          <Link href="/jobs" className="hover:text-[#7C3AED] transition">Search Jobs</Link>
+          <Link href="/tracker" className="hover:text-[#7C3AED] transition">ApplicationTracker</Link>
+          <Link href="/blog" className="hover:text-[#7C3AED] transition">Career Blog</Link>
         </div>
         <div className="hidden md:flex items-center gap-4 relative">
           {isLoggedIn ? (
@@ -117,7 +117,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={() => openAuthForm(false)}
-              className="px-5 py-1.5 bg-[#56C8D8] text-white text-sm font-medium rounded hover:bg-[#56c9d8c8] transition"
+              className="px-5 py-1.5 bg-[#8B5CF6] text-white text-sm font-medium rounded hover:bg-[#7C3AED] transition"
             >
               Login / SignUp
             </button>
@@ -127,7 +127,7 @@ const Navbar = () => {
 
       {/* MOBILE MENU */}
       {menuOpen && (
-        <div className="md:hidden flex flex-col items-center gap-4 py-6 bg-[#2C6B99] text-[#FFFFFF] text-sm font-medium shadow-md">
+        <div className="md:hidden flex flex-col items-center gap-4 py-6 bg-[#8B5CF6] text-[#FFFFFF] text-sm font-medium shadow-md">
           <Link href="/" className="hover:text-white" onClick={toggleMenu}>Home</Link>
           <Link href="/jobs" className="hover:text-white" onClick={toggleMenu}>Find Jobs</Link>
           <Link href="/tracker" className="hover:text-white" onClick={toggleMenu}>Tracker</Link>
@@ -142,7 +142,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={() => openAuthForm(false)}
-              className="px-5 py-1.5 bg-[#56C8D8] text-black font-semibold rounded hover:bg-[#2C6B99] text-sm"
+              className="px-5 py-1.5 bg-[#8B5CF6] text-black font-semibold rounded hover:bg-[#7C3AED] text-sm"
             >
               Login
             </button>
@@ -168,7 +168,7 @@ const Navbar = () => {
                   placeholder="Full Name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 rounded bg-white/100 text-black focus:outline-none focus:ring-3 focus:ring-[#56C8D8]"
+                  className="w-full px-4 py-2 rounded bg-white/100 text-black focus:outline-none focus:ring-3 focus:ring-[#8B5CF6]"
                   required
                 />
               )}
@@ -178,7 +178,7 @@ const Navbar = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded bg-white/100 text-black focus:outline-none focus:ring-3 focus:ring-[#56C8D8]"
+                className="w-full px-4 py-2 rounded bg-white/100 text-black focus:outline-none focus:ring-3 focus:ring-[#8B5CF6]"
                 required
               />
               <input
@@ -187,12 +187,12 @@ const Navbar = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded bg-white/100 text-black focus:outline-none focus:ring-3 focus:ring-[#56C8D8]"
+                className="w-full px-4 py-2 rounded bg-white/100 text-black focus:outline-none focus:ring-3 focus:ring-[#8B5CF6]"
                 required
               />
               <button
                 type="submit"
-                className="w-full py-2 bg-[#56C8D8] text-black font-bold rounded hover:bg-[#56c9d8c8] transition"
+                className="w-full py-2 bg-[#8B5CF6] text-white font-bold rounded hover:bg-[#7C3AED] transition"
               >
                 {isSignup ? "Sign Up" : "Log In"}
               </button>
@@ -201,7 +201,7 @@ const Navbar = () => {
               <button onClick={() => setShowAuthForm(false)} className="hover:underline text-gray-300">
                 Cancel
               </button>
-              <button onClick={() => openAuthForm(!isSignup)} className="text-[#56C8D8] hover:underline font-semibold">
+              <button onClick={() => openAuthForm(!isSignup)} className="text-[#8B5CF6] hover:underline font-semibold">
                 {isSignup ? "Already have an account?" : "Create an account"}
               </button>
             </div>

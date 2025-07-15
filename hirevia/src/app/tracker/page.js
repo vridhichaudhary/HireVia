@@ -37,7 +37,7 @@ const ApplicationTracker = () => {
               Start tracking your job applications to manage your job search effectively
             </p>
             <Link href="/searchjobs">
-            <button className="bg-[#56C8D8] hover:bg-[#56a8d8] text-white px-6 py-2 rounded-md transition">
+            <button className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white px-6 py-2 rounded-md transition">
               Search Jobs
             </button>
             </Link>
@@ -58,14 +58,14 @@ const ApplicationTracker = () => {
                 <div className="flex flex-wrap gap-2 mt-3 text-xs">
                   <span className="bg-gray-700 px-2 py-1 rounded">{job.location}</span>
                   <span className="bg-gray-700 px-2 py-1 rounded">{job.type}</span>
-                  {job.remote && <span className="bg-[#56C8D8] px-2 py-1 rounded">Remote</span>}
+                  {job.remote && <span className="bg-[#8B5CF6] px-2 py-1 rounded">Remote</span>}
                 </div>
                 <p className="text-sm text-gray-400 mt-2">
                   Salary: {job.salary}
                 </p>
 
                 <button
-                  className="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md text-sm font-medium"
+                  className="mt-4 w-full bg-red-800 hover:bg-red-900 text-white py-2 rounded-md text-sm font-medium"
                   onClick={() => removeJob(job.id)}
                 >
                   Remove Application

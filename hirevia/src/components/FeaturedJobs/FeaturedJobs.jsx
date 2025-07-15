@@ -1,6 +1,7 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 
-const jobs = [
+const initialJobs = [
   {
     id: 1,
     title: 'Frontend Developer',
@@ -52,6 +53,25 @@ const jobs = [
 ];
 
 const FeaturedJobs = () => {
+  const [jobs, setJobs] = useState(initialJobs);
+
+  const handleTrack = (jobId) => {
+    const updatedJobs = jobs.map(job => {
+      if (job.id === jobId) {
+        // Save to localStorage
+        const saved = JSON.parse(localStorage.getItem("trackedJobs")) || [];
+        const alreadyExists = saved.some(j => j.id === job.id);
+        if (!alreadyExists) {
+          const jobWithStatus = { ...job, appliedDate: new Date().toLocaleDateString(), status: 'Applied' };
+          localStorage.setItem("trackedJobs", JSON.stringify([...saved, jobWithStatus]));
+        }
+        return { ...job, applied: true };
+      }
+      return job;
+    });
+    setJobs(updatedJobs);
+  };
+
   return (
     <section className="bg-[#0A0E17] text-white py-16 px-6 md:px-20">
       <div className="flex justify-between items-center mb-8">
@@ -59,8 +79,8 @@ const FeaturedJobs = () => {
           <h2 className="text-3xl font-semibold">Featured Jobs</h2>
           <p className="text-[#A0B7C2] mt-1">Explore our handpicked opportunities</p>
         </div>
-        <button className="border border-[#56C8D8] px-4 py-2 rounded-md text-sm hover:bg-[#56C8D8]/10 transition">
-        View All Jobs
+        <button className="border border-[#8B5CF6] px-4 py-2 rounded-md text-sm hover:bg-[#56C8D8]/10 transition">
+          View All Jobs
         </button>
       </div>
 
@@ -68,7 +88,7 @@ const FeaturedJobs = () => {
         {jobs.map((job) => (
           <div
             key={job.id}
-            className="bg-[#111827] p-6 rounded-xl shadow-md border border-[#1f2937] hover:shadow-[0_0_5px_#56C8D8] hover:scale-[1.05] transition duration-300"
+            className="bg-[#111827] p-6 rounded-xl shadow-md border border-[#1f2937] hover:shadow-[0_0_5px_#8B5CF6] hover:scale-[1.05] transition duration-300"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -81,7 +101,7 @@ const FeaturedJobs = () => {
               <span className="px-2 py-1 bg-[#1F2937] rounded-full">{job.location}</span>
               <span className="px-2 py-1 bg-[#1F2937] rounded-full">{job.type}</span>
               {job.remote && (
-                <span className="px-2 py-1 bg-[#56C8D8] text-black rounded-full font-semibold">Remote</span>
+                <span className="px-2 py-1 bg-[#8B5CF6] text-white rounded-full font-semibold">Remote</span>
               )}
             </div>
 
@@ -104,10 +124,11 @@ const FeaturedJobs = () => {
             <div className="flex items-center justify-between">
               <span className="text-sm">{job.salary}</span>
               <button
+                onClick={() => handleTrack(job.id)}
                 className={`px-4 py-2 text-sm rounded-md ${
                   job.applied
                     ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                    : 'bg-[#56C8D8] hover:bg-[#74d6e4] transition text-black font-medium text-sm'
+                    : 'bg-[#8B5CF6] hover:bg-[#7C3AED] active:bg-[#6D28D9] transition text-white font-medium text-sm'
                 }`}
                 disabled={job.applied}
               >

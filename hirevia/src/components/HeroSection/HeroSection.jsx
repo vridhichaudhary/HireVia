@@ -11,7 +11,7 @@ const HeroSection = () => {
           <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
           Find Your <br />
           Dream Job Across <br />
-            <span className="text-[#56C8D8]">Multiple Platforms</span>
+            <span className="text-[#8B5CF6]">Multiple Platforms</span>
           </h1>
           <p className="text-gray-400 text-lg mt-4">
           Search across LinkedIn, Naukri, Internshala and more from one place. Track applications and get hired faster.
@@ -19,7 +19,7 @@ const HeroSection = () => {
 
           <div className="flex flex-col sm:flex-row items-center mt-8 w-full">
             <Link href="/jobs">
-            <button className="bg-[#56C8D8] text-white font-medium px-12 py-4 rounded-md hover:bg-[#56c9d8c8] transition">
+            <button className="bg-[#8B5CF6] text-white font-medium px-12 py-4 rounded-md hover:bg-[#7C3AED] transition">
               Search
             </button>
             </Link>
@@ -31,9 +31,9 @@ const HeroSection = () => {
           <Image
             src={"/girl_img.png"}
             alt=""
-            width={800}
-            height={800}
-            className="object-contain"
+            width={900}
+            height={900}
+            className="object-contain scale-120"
           />
         </div>
       </div>

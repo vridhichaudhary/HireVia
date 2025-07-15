@@ -122,7 +122,7 @@ const BlogSection = () => {
           </div>
 
           <div className="p-6 sm:p-10 flex flex-col gap-4 mb-10">
-            <span className="bg-[#70bdf5] text-white px-4 py-1 rounded-full text-sm font-medium w-fit">
+            <span className="bg-[#8B5CF6] text-white px-4 py-1 rounded-full text-sm font-medium w-fit">
               Featured
             </span>
             <h3 className="text-2xl sm:text-3xl font-bold leading-tight">
@@ -139,7 +139,7 @@ const BlogSection = () => {
             </div>
             <a
               href="#"
-              className="text-[#70bdf5] hover:underline font-medium mt-2 w-fit"
+              className="text-[#8B5CF6] hover:underline font-medium mt-2 w-fit"
             >
               Read Full Article →
             </a>
@@ -160,7 +160,7 @@ const BlogSection = () => {
                 className="object-cover"
               />
               <div className="p-5">
-                <span className="inline-block bg-[#70bdf5] text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                <span className="inline-block bg-[#8B5CF6] text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
                   {blog.category}
                 </span>
                 <h3 className="text-xl font-semibold mb-3">{blog.title}</h3>

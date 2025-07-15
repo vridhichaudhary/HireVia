@@ -261,7 +261,7 @@ const SearchJobs = () => {
         {displayedJobs.map((job) => (
           <div
             key={job.id}
-            className="bg-[#141625]/60 backdrop-blur-md px-6 py-5 rounded-xl border border-gray-800 hover:shadow-[0_0_5px_#56C8D8] hover:scale-[1.02] transition duration-300"
+            className="bg-[#141625]/60 backdrop-blur-md px-6 py-5 rounded-xl border border-gray-800 hover:shadow-[0_0_5px_#8B5CF6] hover:scale-[1.02] transition duration-300"
           >
             <div className="flex justify-between items-start">
               <div>
@@ -273,7 +273,7 @@ const SearchJobs = () => {
               <span className="bg-gray-700 px-2 py-1 rounded">{job.location}</span>
               <span className="bg-gray-700 px-2 py-1 rounded">{job.type}</span>
               {job.remote && (
-                <span className="bg-[#56C8D8] px-2 py-1 rounded">Remote</span>
+                <span className="bg-[#8B5CF6] px-2 py-1 rounded">Remote</span>
               )}
             </div>
             <div className="flex justify-between items-center mt-4 text-sm">
@@ -289,7 +289,7 @@ const SearchJobs = () => {
               className={`mt-4 w-full ${
                 addedJobs.includes(job.id)
                   ? "bg-gray-600 text-gray-300 cursor-not-allowed"
-                  : "bg-[#56C8D8] hover:bg-[#56a8d8] text-white"
+                  : "bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
               } py-2 rounded-md text-sm font-medium`}
             >
               {addedJobs.includes(job.id) ? "Added to Tracker" : "Track Application"}
