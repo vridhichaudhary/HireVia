@@ -18,10 +18,6 @@ const ApplicationTracker = () => {
   localStorage.setItem("trackedJobs", JSON.stringify(updatedJobs));
 };
 
-  const statusCounts = trackedJobs.reduce((counts, job) => {
-    counts[job.status] = (counts[job.status] || 0) + 1;
-    return counts;
-  }, {});
 
   return (
     <section className="bg-[#0B0D14] min-h-screen text-white px-4 py-12">

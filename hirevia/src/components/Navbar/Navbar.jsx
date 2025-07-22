@@ -79,7 +79,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* NAVBAR COMPONENT */}
       <nav className="flex items-center justify-between px-6 py-3 bg-black/30 text-white shadow-md sticky top-0 z-40">
         <div className="text-2xl font-bold tracking-wide">
           Hire<span className="text-[#8B5CF6]">Via</span>
@@ -96,7 +95,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-8 text-sm">
           <Link href="/" className="hover:text-[#7C3AED] transition">Home</Link>
           <Link href="/jobs" className="hover:text-[#7C3AED] transition">Search Jobs</Link>
-          <Link href="/tracker" className="hover:text-[#7C3AED] transition">ApplicationTracker</Link>
+          <Link href="/tracker" className="hover:text-[#7C3AED] transition">Application Tracker</Link>
           <Link href="/blog" className="hover:text-[#7C3AED] transition">Career Blog</Link>
         </div>
         <div className="hidden md:flex items-center gap-4 relative">
@@ -125,7 +124,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="md:hidden flex flex-col items-center gap-4 py-6 bg-[#8B5CF6] text-[#FFFFFF] text-sm font-medium shadow-md">
           <Link href="/" className="hover:text-white" onClick={toggleMenu}>Home</Link>

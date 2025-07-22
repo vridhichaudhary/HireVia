@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Footer from "@/components/Footer/Footer";
 import { addTrackedJob, isJobTracked } from "@/utils/localStorageUtils";
 
-const JOBS_PER_PAGE = 5;
+const JOBS_PER_PAGE = 6;
 
 const platformColors = {
   Linkedin: "bg-[#1D4ED8]",
@@ -176,6 +176,72 @@ const allJobs = [
     platform: "Internshala",
     posted: "06/05/2025",
     salary: "₹13,00,000 - ₹16,00,000",
+  },
+  {
+    id: 16,
+    title: "Marketing Head",
+    company: "Genomepathra Wellness Private Limited",
+    location: "Mumbai, India",
+    type: "Full Time",
+    remote: false,
+    platform: "Linkedin",
+    posted: "08/05/2025",
+    salary: "₹50000 - ₹140000",
+  },
+  {
+    id: 17,
+    title: "Sales & Marketing Executive",
+    company: "Srushti Realtors Private Limited",
+    location: "Bangalore, India",
+    type: "Full Time",
+    remote: true,
+    platform: "Naukri",
+    posted: "21/05/2025",
+    salary: "₹30000 - ₹100000",
+  },
+  {
+    id: 18,
+    title: "Oracle PL/SQL Developer",
+    company: "Coforge Ltd (NIIT Technologies)",
+    location: "Remote",
+    type: "Internship",
+    remote: true,
+    platform: "Naukri",
+    posted: "09/05/2025",
+    salary: "₹75000 - ₹130000",
+  },
+  {
+    id: 19,
+    title: "Manager IT Recruitment",
+    company: "Best Infosystems Limited",
+    location: "Remote",
+    type: "Full Time",
+    remote: true,
+    platform: "Linkedin",
+    posted: "15/05/2025",
+    salary: "₹100000 - ₹149000",
+  },
+  {
+    id: 20,
+    title: "Electrical Engineer",
+    company: "Alps Consultant Private Limited",
+    location: "Delhi, India",
+    type: "Part Time",
+    remote: false,
+    platform: "Internshala",
+    posted: "30/05/2025",
+    salary: "₹90000 - ₹125000",
+  },
+  {
+    id: 21,
+    title: "Export Manager",
+    company: "Kimson (India) Private Limited",
+    location: "Ahmedabad, India",
+    type: "Full Time",
+    remote: false,
+    platform: "Naukri",
+    posted: "28/04/2025",
+    salary: "₹10000 - ₹100000",
   }
 ];
 
@@ -223,7 +289,7 @@ const SearchJobs = () => {
 
   const handleTrack = (job) => {
     if (!addedJobs.includes(job.id)) {
-      addTrackedJob({ ...job, status: "Offer", appliedOn: new Date().toISOString() });
+      addTrackedJob({ ...job, status: "Applied", appliedOn: new Date().toISOString() });
       setAddedJobs((prev) => [...prev, job.id]);
     }
   };

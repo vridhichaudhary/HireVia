@@ -6,7 +6,6 @@ const HeroSection = () => {
     <section className="bg-gradient-to-t from-black via-[#0D1117] to-[#1F2937] py-24 px-6">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
         
-        
         <div className="text-left max-w-xl">
           <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
           Find Your <br />

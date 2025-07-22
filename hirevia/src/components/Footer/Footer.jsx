@@ -11,11 +11,6 @@ const Footer = () => {
             <p className="text-sm">
               Your one-stop platform for finding and tracking job opportunities across multiple job boards.
             </p>
-            <div className="flex gap-4 mt-4 text-xl text-[#8B5CF6]">
-              <a href="#"><i className="fab fa-twitter"></i></a>
-              <a href="#"><i className="fab fa-linkedin"></i></a>
-              <a href="#"><i className="fab fa-instagram"></i></a>
-            </div>
           </div>
   
           <div>
