@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String?
+  name          String?
+  googleId      String?   @unique
+  avatar        String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  jobs          Job[]     @relation("UserJobs")
+  applications  Application[]
+}
+
+model Job {
+  id              String    @id @default(uuid())
+  title           String
+  company         String
+  location        String
+  type            String    // Full-time, Internship, etc.
+  remote          Boolean   @default(false)
+  description     String    @db.Text
+  requirements    String    @db.Text
+  salary          String?
+  platform        String?
+  postedAt        DateTime  @default(now())
+  creatorId       String
+  creator         User      @relation("UserJobs", fields: [creatorId], references: [id])
+  applications    Application[]
+}
+
+model Application {
+  id            String    @id @default(uuid())
+  jobId         String
+  userId        String
+  status        String    @default("Applied") // Applied, Interviewing, Offer, Rejected
+  appliedAt     DateTime  @default(now())
+  resumeUrl     String?
+  job           Job       @relation(fields: [jobId], references: [id])
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([jobId, userId])
+}
+
+enum Role {
+  USER
+  COMPANY
+  ADMIN
+}

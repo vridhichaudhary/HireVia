@@ -1,5 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { addTrackedJob } from '@/utils/localStorageUtils';
 
 const initialJobs = [
   {
@@ -58,13 +60,8 @@ const FeaturedJobs = () => {
   const handleTrack = (jobId) => {
     const updatedJobs = jobs.map(job => {
       if (job.id === jobId) {
-        // Save to localStorage
-        const saved = JSON.parse(localStorage.getItem("trackedJobs")) || [];
-        const alreadyExists = saved.some(j => j.id === job.id);
-        if (!alreadyExists) {
-          const jobWithStatus = { ...job, appliedDate: new Date().toLocaleDateString(), status: 'Applied' };
-          localStorage.setItem("trackedJobs", JSON.stringify([...saved, jobWithStatus]));
-        }
+        const jobWithStatus = { ...job, appliedDate: new Date().toLocaleDateString(), status: 'Applied' };
+        addTrackedJob(jobWithStatus);
         return { ...job, applied: true };
       }
       return job;
@@ -73,70 +70,90 @@ const FeaturedJobs = () => {
   };
 
   return (
-    <section className="bg-[#0A0E17] text-white py-16 px-6 md:px-20">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-3xl font-semibold">Featured Jobs</h2>
-          <p className="text-[#A0B7C2] mt-1">Explore our handpicked opportunities</p>
-        </div>
-        <button className="border border-[#8B5CF6] px-4 py-2 rounded-md text-sm hover:bg-[#56C8D8]/10 transition">
-          View All Jobs
-        </button>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {jobs.map((job) => (
-          <div
-            key={job.id}
-            className="bg-[#111827] p-6 rounded-xl shadow-md border border-[#1f2937] hover:shadow-[0_0_5px_#8B5CF6] hover:scale-[1.05] transition duration-300"
+    <section className="bg-[#0B1120] text-white py-20 px-6 md:px-20 relative overflow-hidden border-t border-white/5">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+          <motion.div
+            initial={{ opacity: 0, x: -15 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-1"
           >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-medium">{job.title}</h3>
-                <p className="text-sm text-[#A0B7C2]">{job.company}</p>
+            <h2 className="text-3xl font-black tracking-tight">Featured <span className="text-indigo-400">Opportunities</span></h2>
+            <p className="text-slate-400 text-sm font-medium">Curated roles from vetted technology partners.</p>
+          </motion.div>
+
+          <button className="px-5 py-2 rounded-lg border border-slate-700 text-slate-300 text-xs font-bold uppercase tracking-wider hover:bg-slate-800 hover:text-white transition-all">
+            View All Openings
+          </button>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {jobs.map((job, index) => (
+            <motion.div
+              key={job.id}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ y: -4 }}
+              className="glass-card p-6 rounded-2xl flex flex-col justify-between group h-full relative border border-white/5"
+            >
+              <div className="absolute top-6 right-6">
+                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border ${job.platform === 'LinkedIn' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                    job.platform === 'Naukri' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                  }`}>
+                  {job.platform}
+                </span>
               </div>
-            </div>
 
-            <div className="flex flex-wrap gap-2 text-xs mb-3">
-              <span className="px-2 py-1 bg-[#1F2937] rounded-full">{job.location}</span>
-              <span className="px-2 py-1 bg-[#1F2937] rounded-full">{job.type}</span>
-              {job.remote && (
-                <span className="px-2 py-1 bg-[#8B5CF6] text-white rounded-full font-semibold">Remote</span>
-              )}
-            </div>
+              <div>
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-indigo-400 font-bold text-lg border border-white/5">
+                    {job.company[0]}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold group-hover:text-indigo-400 transition-colors">{job.title}</h3>
+                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">{job.company}</p>
+                  </div>
+                </div>
 
-            <p className="text-sm text-[#A0B7C2] mb-3">Posted {job.posted}</p>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                    {job.location}
+                  </span>
+                  <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                    {job.type}
+                  </span>
+                  {job.remote && (
+                    <span className="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-md text-[10px] font-black uppercase tracking-wide">
+                      Remote
+                    </span>
+                  )}
+                </div>
+              </div>
 
-            <div className="mb-4">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  job.platform === 'LinkedIn' ? 'bg-blue-900 text-blue-200' :
-                  job.platform === 'Naukri' ? 'bg-red-900 text-red-200' :
-                  job.platform === 'Internshala' ? 'bg-green-900 text-green-200' : 'bg-gray-700'
-                }`}
-              >
-                {job.platform}
-              </span>
-            </div>
+              <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Est. Salary</span>
+                  <p className="text-base font-black text-white">{job.salary}</p>
+                </div>
 
-            <hr className="border-[#2C3E50] mb-3" />
-
-            <div className="flex items-center justify-between">
-              <span className="text-sm">{job.salary}</span>
-              <button
-                onClick={() => handleTrack(job.id)}
-                className={`px-4 py-2 text-sm rounded-md ${
-                  job.applied
-                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                    : 'bg-[#8B5CF6] hover:bg-[#7C3AED] active:bg-[#6D28D9] transition text-white font-medium text-sm'
-                }`}
-                disabled={job.applied}
-              >
-                {job.applied ? 'Added to Tracker' : 'Track Application'}
-              </button>
-            </div>
-          </div>
-        ))}
+                <button
+                  onClick={() => handleTrack(job.id)}
+                  disabled={job.applied}
+                  className={`px-5 py-2 rounded-lg text-xs font-bold transition-all shadow-md ${job.applied
+                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                      : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-600/10'
+                    }`}
+                >
+                  {job.applied ? 'Tracking' : 'Quick Track'}
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

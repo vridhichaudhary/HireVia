@@ -3,68 +3,88 @@ import { FaBriefcase } from "react-icons/fa";
 import React, { useEffect, useState } from 'react';
 import Footer from '@/components/Footer/Footer';
 import Link from 'next/link';
+import { getTrackedJobs, removeTrackedJob } from '@/utils/localStorageUtils';
 
 const ApplicationTracker = () => {
   const [trackedJobs, setTrackedJobs] = useState([]);
 
   useEffect(() => {
-    const savedJobs = JSON.parse(localStorage.getItem("trackedJobs")) || [];
-    setTrackedJobs(savedJobs);
+    setTrackedJobs(getTrackedJobs());
   }, []);
 
   const removeJob = (id) => {
-  const updatedJobs = trackedJobs.filter((job) => job.id !== id);
-  setTrackedJobs(updatedJobs);
-  localStorage.setItem("trackedJobs", JSON.stringify(updatedJobs));
-};
-
+    const updatedJobs = removeTrackedJob(id);
+    setTrackedJobs(updatedJobs);
+  };
 
   return (
-    <section className="bg-[#0B0D14] min-h-screen text-white px-4 py-12">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-2">Application Tracker</h2>
-        <p className="text-gray-400 mb-10">Track and manage your job applications</p>
+    <section className="bg-[#0B1120] min-h-screen text-white pt-28 pb-20 px-6 md:px-20 relative overflow-hidden">
+      <div className="glow-mesh opacity-20" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <header className="mb-12">
+          <h2 className="text-3xl font-black tracking-tight mb-2 uppercase">Application <span className="text-indigo-400">Pipeline</span></h2>
+          <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">Manage your professional acquisition funnel</p>
+        </header>
 
         {trackedJobs.length === 0 ? (
-          <div className="border border-dashed border-gray-600 rounded-lg py-16 flex flex-col items-center text-center space-y-4">
-            <FaBriefcase className="text-4xl text-gray-500" />
-            <h3 className="text-lg font-semibold">You have not tracked any applications yet</h3>
-            <p className="text-gray-400 max-w-md">
-              Start tracking your job applications to manage your job search effectively
-            </p>
+          <div className="glass-card rounded-2xl py-20 flex flex-col items-center text-center space-y-6 border-dashed border-slate-700">
+            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-slate-500 text-2xl border border-white/5">
+              <FaBriefcase />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-black uppercase tracking-tight text-slate-300">Pipeline Empty</h3>
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest max-w-xs mx-auto">
+                Initialize your search by tracking premium opportunities from the marketplace.
+              </p>
+            </div>
             <Link href="/jobs">
-            <button className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white px-6 py-2 rounded-md transition">
-              Search Jobs
-            </button>
+              <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-600/20 transition-all">
+                Access Marketplace
+              </button>
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {trackedJobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-[#141625]/60 backdrop-blur-md px-6 py-5 rounded-xl border border-gray-800"
+                className="glass-card p-6 rounded-2xl border border-white/5 relative group"
               >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h2 className="text-base">{job.title}</h2>
-                    <p className="text-gray-400 text-sm">{job.company}</p>
+                    <h3 className="text-lg font-bold group-hover:text-indigo-400 transition-colors uppercase tracking-tight leading-tight">{job.title}</h3>
+                    <p className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em] mt-1">{job.company}</p>
                   </div>
+                  <span className="pro-badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    Live
+                  </span>
                 </div>
-                <div className="flex flex-wrap gap-2 mt-3 text-xs">
-                  <span className="bg-gray-700 px-2 py-1 rounded">{job.location}</span>
-                  <span className="bg-gray-700 px-2 py-1 rounded">{job.type}</span>
-                  {job.remote && <span className="bg-[#8B5CF6] px-2 py-1 rounded">Remote</span>}
+
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                    {job.location}
+                  </span>
+                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                    {job.type}
+                  </span>
+                  {job.remote && (
+                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded text-[9px] font-black uppercase tracking-widest">
+                      Remote
+                    </span>
+                  )}
                 </div>
-                <p className="text-sm text-gray-400 mt-2">
-                  Salary: {job.salary}
-                </p>
+
+                <div className="flex items-center justify-between text-[10px] text-slate-500 font-black uppercase tracking-widest mb-4">
+                  <span>Est. Yield: <span className="text-white">{job.salary}</span></span>
+                  <span>Status: <span className="text-indigo-400">Tracked</span></span>
+                </div>
 
                 <button
-                  className="mt-4 w-full bg-red-800 hover:bg-red-900 text-white py-2 rounded-md text-sm font-medium"
+                  className="w-full bg-slate-800/50 hover:bg-red-950/30 border border-slate-700/50 hover:border-red-500/30 text-slate-400 hover:text-red-400 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
                   onClick={() => removeJob(job.id)}
                 >
-                  Remove Application
+                  Decommission Entry
                 </button>
               </div>
             ))}

@@ -1,15 +1,43 @@
+"use client";
 export const getTrackedJobs = () => {
-  if (typeof window !== "undefined") {
-    const data = localStorage.getItem("trackedJobs");
+  if (typeof window === "undefined") return [];
+  try {
+    const storage = window.localStorage;
+    if (!storage || typeof storage.getItem !== "function") return [];
+
+    const data = storage.getItem("trackedJobs");
     return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Safe localStorage read failed:", error);
+    return [];
   }
-  return [];
+};
+
+export const saveTrackedJobs = (jobs) => {
+  if (typeof window === "undefined") return;
+  try {
+    const storage = window.localStorage;
+    if (!storage || typeof storage.setItem !== "function") return;
+    storage.setItem("trackedJobs", JSON.stringify(jobs));
+  } catch (error) {
+    console.error("Safe localStorage write failed:", error);
+  }
 };
 
 export const addTrackedJob = (job) => {
   const jobs = getTrackedJobs();
-  const updated = [...jobs, job];
-  localStorage.setItem("trackedJobs", JSON.stringify(updated));
+  // Avoid duplicates
+  if (!jobs.some((j) => j.id === job.id)) {
+    const updated = [...jobs, job];
+    saveTrackedJobs(updated);
+  }
+};
+
+export const removeTrackedJob = (id) => {
+  const jobs = getTrackedJobs();
+  const updated = jobs.filter((job) => job.id !== id);
+  saveTrackedJobs(updated);
+  return updated;
 };
 
 export const isJobTracked = (id) => {
