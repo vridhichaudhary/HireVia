@@ -35,6 +35,9 @@ model Job {
   requirements    String    @db.Text
   salary          String?
   platform        String?
+  techStack       String?   // comma separated or JSON
+  industry        String?
+  seniority       String?   // Junior, Mid, Senior, Lead
   postedAt        DateTime  @default(now())
   creatorId       String
   creator         User      @relation("UserJobs", fields: [creatorId], references: [id])

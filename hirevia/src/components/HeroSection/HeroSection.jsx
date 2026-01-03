@@ -5,40 +5,39 @@ import { motion } from 'framer-motion';
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-[#0B1120] py-20 px-6 md:px-20 min-h-[60vh] flex items-center">
+    <section className="relative overflow-hidden bg-[#020617] py-24 px-6 md:px-20 min-h-[70vh] flex items-center justify-center">
       {/* Background Mesh Glow */}
-      <div className="glow-mesh" />
+      <div className="glow-mesh opacity-40" />
 
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
-
+      <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-left max-w-xl"
+          className="space-y-8"
         >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest mb-2"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
             </span>
-            Live Aggregator
+            Live Intelligence
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.15] tracking-tight"
+            className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight"
           >
-            The Smarter Way to <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-sky-400">
-              Land Your Next Role
+            Streamline Your <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+              Professional Search
             </span>
           </motion.h1>
 
@@ -46,66 +45,28 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-slate-400 text-base md:text-lg mt-6 font-medium leading-relaxed max-w-lg"
+            className="text-slate-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto"
           >
-            Aggregating premium opportunities from LinkedIn, Naukri, and Internshala.
-            AI-driven matching tailored for the next generation of engineers.
+            A high-performance aggregator for elite engineers. Access curated roles
+            from global platforms through a single, unified interface.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-col sm:flex-row items-center gap-4 mt-10 w-full"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
             <Link href="/jobs" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-indigo-600 text-white font-bold px-8 py-3.5 rounded-lg hover:bg-indigo-500 transition-all duration-300 shadow-lg shadow-indigo-600/20">
-                Explore All Jobs
+              <button className="w-full sm:w-auto bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest px-10 py-4 rounded-lg hover:bg-blue-500 transition-all duration-300 shadow-xl shadow-blue-600/10">
+                Explore Roles
               </button>
             </Link>
             <Link href="/tracker" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-slate-800/50 border border-slate-700/50 text-slate-200 font-bold px-8 py-3.5 rounded-lg hover:bg-slate-800 transition-all">
-                Track Applications
+              <button className="w-full sm:w-auto bg-slate-800/40 border border-slate-700/50 text-slate-300 text-[11px] font-black uppercase tracking-widest px-10 py-4 rounded-lg hover:bg-slate-800/60 transition-all">
+                Active Pipeline
               </button>
             </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 1 }}
-            className="mt-10 flex items-center gap-4 py-4 border-t border-slate-800/50"
-          >
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0B1120] bg-slate-800 overflow-hidden">
-                  <img src={`https://i.pravatar.cc/100?u=${i + 10}`} alt="user" />
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Join 500+ professionals</p>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="hidden lg:block relative"
-        >
-          <div className="absolute -inset-10 bg-indigo-500/10 blur-[100px] rounded-full" />
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Image
-              src="/girl_img.png"
-              alt="Hiring"
-              width={500}
-              height={500}
-              className="relative z-10 drop-shadow-2xl brightness-95"
-              priority
-            />
           </motion.div>
         </motion.div>
       </div>
