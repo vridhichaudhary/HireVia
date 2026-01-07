@@ -1,437 +1,291 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Footer from "@/components/Footer/Footer";
-import { addTrackedJob, isJobTracked } from "@/utils/localStorageUtils";
+import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
+import { FaSearch, FaMapMarkerAlt, FaBookmark, FaHeart } from "react-icons/fa";
 
-const JOBS_PER_PAGE = 6;
-
-const platformColors = {
-  Linkedin: "bg-[#1D4ED8]",
-  Naukri: "bg-[#991B1B]",
-  Internshala: "bg-green-700",
-};
-
-const allJobs = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    company: "TechCorp",
-    location: "Bangalore, India",
-    type: "Full Time",
-    remote: true,
-    platform: "Linkedin",
-    posted: "01/05/2025",
-    salary: "₹8,00,000 - ₹12,00,000",
-  },
-  {
-    id: 2,
-    title: "UI/UX Design Intern",
-    company: "CreativeMinds",
-    location: "Delhi, India",
-    type: "Internship",
-    remote: true,
-    platform: "Internshala",
-    posted: "03/05/2025",
-    salary: "₹15,000 - ₹25,000 per month",
-  },
-  {
-    id: 3,
-    title: "Backend Developer Intern",
-    company: "HireMinds",
-    location: "Bangalore, India",
-    type: "Internship",
-    remote: true,
-    platform: "Naukri",
-    posted: "05/05/2025",
-    salary: "₹45,000 - ₹55,000 per month",
-  },
-  {
-    id: 4,
-    title: 'Full Stack Developer',
-    company: 'InnovationTech',
-    location: 'Hyderabad, India',
-    type: 'Full Time',
-    remote: true,
-    posted: '04/05/2025',
-    platform: 'Linkedin',
-    salary: '₹15,00,000 - ₹22,00,000',
-  },
-  {
-    id: 5,
-    title: "Backend Engineer",
-    company: "DataSystems",
-    location: "Mumbai, India",
-    type: "Full Time",
-    remote: false,
-    platform: "Naukri",
-    posted: "02/05/2025",
-    salary: "₹12,00,000 - ₹18,00,000",
-  },
-  {
-    id: 6,
-    title: "Data Analyst",
-    company: "InsightAnalytics",
-    location: "Pune, India",
-    type: "Full Time",
-    remote: false,
-    platform: "Naukri",
-    posted: "05/05/2025",
-    salary: "₹6,00,000 - ₹10,00,000",
-  },
-  {
-    id: 7,
-    title: "Content Marketing Intern",
-    company: "BrandBuilder",
-    location: "Remote",
-    type: "Internship",
-    remote: true,
-    platform: "Internshala",
-    posted: "06/05/2025",
-    salary: "₹10,000 - ₹20,000 per month",
-  },
-  {
-    id: 8,
-    title: "Machine Learning Intern",
-    company: "AIMinds",
-    location: "Chennai, India",
-    type: "Internship",
-    remote: true,
-    platform: "Internshala",
-    posted: "06/05/2025",
-    salary: "₹20,000 - ₹30,000 per month",
-  },
-  {
-    id: 9,
-    title: "DevOps Engineer",
-    company: "CloudGen",
-    location: "Remote",
-    type: "Full Time",
-    remote: true,
-    platform: "Linkedin",
-    posted: "06/05/2025",
-    salary: "₹13,00,000 - ₹16,00,000",
-  },
-  {
-    id: 10,
-    title: "Mobile App Developer",
-    company: "Appify",
-    location: "Ahmedabad, India",
-    type: "Full Time",
-    remote: false,
-    platform: "Naukri",
-    posted: "06/05/2025",
-    salary: "₹7,00,000 - ₹11,00,000",
-  },
-  {
-    id: 11,
-    title: "Business Analyst Intern",
-    company: "BizSense",
-    location: "Noida, India",
-    type: "Internship",
-    remote: true,
-    platform: "Internshala",
-    posted: "06/05/2025",
-    salary: "₹15,000 - ₹25,000 per month",
-  },
-  {
-    id: 12,
-    title: "Product Manager",
-    company: "JP Morgan",
-    location: "Bangalore, India",
-    type: "Full Time",
-    remote: false,
-    platform: "Linkedin",
-    posted: "11/05/2025",
-    salary: "₹80,000 - ₹90,000 per month",
-  },
-  {
-    id: 13,
-    title: "Content Marketing Intern",
-    company: "BrandBuilder",
-    location: "Gurugram, India",
-    type: "Full Time",
-    remote: true,
-    platform: "Internshala",
-    posted: "21/05/2025",
-    salary: "₹30,000 - ₹40,000 per month",
-  },
-  {
-    id: 14,
-    title: "AI Engineer",
-    company: "OpenAI",
-    location: "California, USA",
-    type: "Full Time",
-    remote: false,
-    platform: "Linkedin",
-    posted: "06/06/2025",
-    salary: "₹90,00,000 - ₹95,00,000",
-  },
-  {
-    id: 15,
-    title: "Data Analyst",
-    company: "CloudGen",
-    location: "Remote",
-    type: "Full Time",
-    remote: true,
-    platform: "Internshala",
-    posted: "06/05/2025",
-    salary: "₹13,00,000 - ₹16,00,000",
-  },
-  {
-    id: 16,
-    title: "Marketing Head",
-    company: "Genomepathra Wellness Private Limited",
-    location: "Mumbai, India",
-    type: "Full Time",
-    remote: false,
-    platform: "Linkedin",
-    posted: "08/05/2025",
-    salary: "₹50000 - ₹140000",
-  },
-  {
-    id: 17,
-    title: "Sales & Marketing Executive",
-    company: "Srushti Realtors Private Limited",
-    location: "Bangalore, India",
-    type: "Full Time",
-    remote: true,
-    platform: "Naukri",
-    posted: "21/05/2025",
-    salary: "₹30000 - ₹100000",
-  },
-  {
-    id: 18,
-    title: "Oracle PL/SQL Developer",
-    company: "Coforge Ltd (NIIT Technologies)",
-    location: "Remote",
-    type: "Internship",
-    remote: true,
-    platform: "Naukri",
-    posted: "09/05/2025",
-    salary: "₹75000 - ₹130000",
-  },
-  {
-    id: 19,
-    title: "Manager IT Recruitment",
-    company: "Best Infosystems Limited",
-    location: "Remote",
-    type: "Full Time",
-    remote: true,
-    platform: "Linkedin",
-    posted: "15/05/2025",
-    salary: "₹100000 - ₹149000",
-  },
-  {
-    id: 20,
-    title: "Electrical Engineer",
-    company: "Alps Consultant Private Limited",
-    location: "Delhi, India",
-    type: "Part Time",
-    remote: false,
-    platform: "Internshala",
-    posted: "30/05/2025",
-    salary: "₹90000 - ₹125000",
-  },
-  {
-    id: 21,
-    title: "Export Manager",
-    company: "Kimson (India) Private Limited",
-    location: "Ahmedabad, India",
-    type: "Full Time",
-    remote: false,
-    platform: "Naukri",
-    posted: "28/04/2025",
-    salary: "₹10000 - ₹100000",
-  }
-];
-
-const SearchJobs = () => {
+const Jobs = () => {
+  const { user } = useAuth();
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredJobs, setFilteredJobs] = useState(allJobs);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortType, setSortType] = useState("date");
-  const [addedJobs, setAddedJobs] = useState([]);
 
-  const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
+  // Real Filters
+  const [industry, setIndustry] = useState("");
+  const [seniority, setSeniority] = useState([]);
+  const [techStack, setTechStack] = useState("");
+
+  const [popularJobs, setPopularJobs] = useState([]);
+
+  // Fetch jobs from backend
+  const fetchJobs = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/jobs`);
+      setJobs(response.data);
+      setPopularJobs(response.data.slice(0, 5)); // Just take first 5 as popular for now
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    applySearchAndSort();
-    const tracked = allJobs.filter((job) => isJobTracked(job.id));
-    setAddedJobs(tracked.map((j) => j.id));
-  }, [searchQuery, sortType]);
+    fetchJobs();
+  }, []);
 
-  const applySearchAndSort = () => {
-    let jobs = allJobs.filter(
-      (job) =>
-        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.company.toLowerCase().includes(searchQuery.toLowerCase())
+  const toggleSeniority = (level) => {
+    if (seniority.includes(level)) {
+      setSeniority(seniority.filter(s => s !== level));
+    } else {
+      setSeniority([...seniority, level]);
+    }
+  };
+
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      companyName(job).toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesIndustry = industry ? job.industry === industry : true;
+    const matchesSeniority = seniority.length === 0 || (job.seniority && seniority.includes(job.seniority));
+    const matchesTechStack = techStack ? job.techStack?.toLowerCase().includes(techStack.toLowerCase()) : true;
+
+    return matchesSearch && matchesIndustry && matchesSeniority && matchesTechStack;
+  });
+
+  // Helper to safely get company name
+  function companyName(job) {
+    return job.company || "Unknown Company";
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-24 flex items-center justify-center bg-[#F8F9FC]">
+        <div className="text-slate-400 font-bold animate-pulse">Loading Dashboard...</div>
+      </div>
     );
-
-    if (sortType === "date") {
-      jobs = jobs.sort(
-        (a, b) =>
-          new Date(b.posted.split("/").reverse().join("-")) -
-          new Date(a.posted.split("/").reverse().join("-"))
-      );
-    } else if (sortType === "salary") {
-      jobs = jobs.sort((a, b) => {
-        const parseSalary = (s) => {
-          const nums = s.replace(/[^\d-]/g, "").split("-");
-          return parseInt(nums[0]);
-        };
-        return parseSalary(b.salary) - parseSalary(a.salary);
-      });
-    }
-
-    setFilteredJobs(jobs);
-    setCurrentPage(1);
-  };
-
-  const handleTrack = (job) => {
-    if (!addedJobs.includes(job.id)) {
-      addTrackedJob({ ...job, status: "Applied", appliedOn: new Date().toISOString() });
-      setAddedJobs((prev) => [...prev, job.id]);
-    }
-  };
-
-  const displayedJobs = filteredJobs.slice(
-    (currentPage - 1) * JOBS_PER_PAGE,
-    currentPage * JOBS_PER_PAGE
-  );
-
-  const changePage = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage);
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-white pt-24 pb-20 px-6 md:px-20 relative overflow-hidden">
-      <div className="glow-mesh opacity-20" />
+    <div className="min-h-screen pt-24 pb-10 px-6 bg-[#F8F9FC]">
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <header className="mb-10">
-          <h2 className="text-3xl font-black tracking-tight mb-2 uppercase">Job <span className="text-indigo-400">Marketplace</span></h2>
-          <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">Aggregating premium opportunities in real-time</p>
-        </header>
-
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-12">
-          <div className="relative w-full md:w-1/2 group">
-            <input
-              type="text"
-              placeholder="Search by role, company, or tech stack..."
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/50 border border-white/5 text-xs font-bold uppercase tracking-widest text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-indigo-400 transition-colors">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+        {/* LEFT SIDEBAR - FILTERS */}
+        <div className="hidden lg:block lg:col-span-3 space-y-6">
+          <div className="dashboard-card p-6 bg-white sticky top-24">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-lg text-slate-900">Filters</h3>
+              <button
+                onClick={() => { setIndustry(""); setSeniority([]); setTechStack(""); }}
+                className="text-xs text-slate-400 hover:text-black font-semibold"
+              >
+                Clear All
+              </button>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 whitespace-nowrap">Sort Options</span>
-            <select
-              className="w-full md:w-auto bg-slate-900/50 border border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-300 px-4 py-3 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all cursor-pointer"
-              value={sortType}
-              onChange={(e) => setSortType(e.target.value)}
-            >
-              <option value="date">Recency</option>
-              <option value="salary">Yield (Salary)</option>
-            </select>
+            {/* Industry */}
+            <div className="mb-8">
+              <label className="text-sm font-bold text-slate-700 mb-3 block">Industry</label>
+              <select
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/5"
+              >
+                <option value="">All Industries</option>
+                <option value="Tech">Tech</option>
+                <option value="Finance">Finance</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Design">Design</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+            </div>
+
+            {/* Seniority */}
+            <div className="mb-8">
+              <label className="text-sm font-bold text-slate-700 mb-3 block">Seniority Level</label>
+              <div className="space-y-3">
+                {["Junior", "Mid", "Senior", "Lead", "Principal"].map((level) => (
+                  <label key={level} className="flex items-center gap-3 cursor-pointer group">
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${seniority.includes(level) ? "bg-black border-black" : "border-slate-300 bg-white group-hover:border-slate-400"}`}>
+                      {seniority.includes(level) && <div className="w-2 h-2 bg-white rounded-full" />}
+                    </div>
+                    <span className="text-sm text-slate-600 font-medium group-hover:text-slate-900">{level}</span>
+                    <input
+                      type="checkbox"
+                      className="hidden"
+                      checked={seniority.includes(level)}
+                      onChange={() => toggleSeniority(level)}
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Tech Stack */}
+            <div>
+              <label className="text-sm font-bold text-slate-700 mb-3 block">Tech Stack</label>
+              <div className="relative">
+                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+                <input
+                  type="text"
+                  placeholder="e.g. React, Python..."
+                  value={techStack}
+                  onChange={(e) => setTechStack(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-black/5"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {displayedJobs.map((job) => (
-            <div
-              key={job.id}
-              className="glass-card p-6 rounded-2xl border border-white/5 relative group h-full flex flex-col justify-between"
-            >
-              <div className="absolute top-6 right-6">
-                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border ${job.platform === 'Linkedin' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                  job.platform === 'Naukri' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                  }`}>
-                  {job.platform}
-                </span>
-              </div>
+        {/* CENTER CONTENT - FEED */}
+        <div className="lg:col-span-6 space-y-8">
+          {/* Header / Search */}
+          <div className="dashboard-card p-4 flex items-center gap-4 bg-white sticky top-24 z-30 shadow-sm border border-slate-100/50 backdrop-blur-xl bg-white/90">
+            <div className="flex-1 flex items-center gap-3 px-2">
+              <FaSearch className="text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by job title or company..."
+                className="w-full text-base font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none bg-transparent"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
 
-              <div>
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center text-indigo-400 font-bold text-lg">
-                    {job.company[0]}
+          {/* Popular Section */}
+          <div>
+            <div className="flex justify-between items-end mb-4 px-1">
+              <h2 className="text-xl font-bold text-slate-900">Featured Opportunities</h2>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+              {popularJobs.map((job) => (
+                <div key={job.id} className="min-w-[280px] dashboard-card p-5 bg-white flex flex-col gap-4 snap-start hover:shadow-lg transition border border-slate-100">
+                  <div className="flex justify-between items-start">
+                    <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-bold text-slate-900 text-xl">
+                      {companyName(job)[0]}
+                    </div>
+                    <button className="text-slate-300 hover:text-black transition"><FaBookmark /></button>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold group-hover:text-indigo-400 transition-colors uppercase tracking-tight leading-tight">{job.title}</h3>
-                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">{job.company}</p>
+                    <h3 className="font-bold text-slate-900 text-base mb-1 line-clamp-1">{job.title}</h3>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">{companyName(job)}</p>
+                  </div>
+                  <div className="mt-auto pt-4 flex items-center gap-2">
+                    <span className="px-2.5 py-1 bg-slate-100 rounded-md text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+                      {job.type || 'Full Time'}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-400 ml-auto">
+                      {job.location}
+                    </span>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    {job.location}
-                  </span>
-                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    {job.type}
-                  </span>
-                  {job.remote && (
-                    <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded text-[9px] font-black uppercase tracking-widest">
-                      Remote
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Est. Salary</span>
-                  <p className="text-sm font-black text-white">{job.salary.split(' - ')[0] || job.salary}</p>
-                </div>
-
-                <button
-                  onClick={() => handleTrack(job)}
-                  disabled={addedJobs.includes(job.id)}
-                  className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-md ${addedJobs.includes(job.id)
-                    ? "bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5"
-                    : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-600/10"
-                    }`}
-                >
-                  {addedJobs.includes(job.id) ? "In Pipeline" : "Quick Track"}
-                </button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        <div className="flex justify-center items-center mt-12 gap-8 text-[11px] font-black uppercase tracking-widest">
-          <button
-            onClick={() => changePage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="flex items-center gap-2 text-slate-500 hover:text-indigo-400 disabled:opacity-30 disabled:hover:text-slate-500 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" />
-            </svg>
-            Prev
-          </button>
-
-          <div className="flex items-center gap-2">
-            <span className="text-white bg-slate-800 w-8 h-8 rounded-lg flex items-center justify-center border border-white/5">{currentPage}</span>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-500">{totalPages}</span>
           </div>
 
-          <button
-            onClick={() => changePage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="flex items-center gap-2 text-slate-500 hover:text-indigo-400 disabled:opacity-30 disabled:hover:text-slate-500 transition-colors"
-          >
-            Next
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          {/* Now Hiring Section */}
+          <div>
+            <div className="flex justify-between items-center mb-6 px-1">
+              <h2 className="text-xl font-bold text-slate-900">Recent Postings</h2>
+              <span className="text-sm font-bold text-slate-500">{filteredJobs.length} results</span>
+            </div>
+
+            <div className="space-y-4">
+              {filteredJobs.map((job) => (
+                <div key={job.id} className="dashboard-card p-6 bg-white hover:border-slate-300 transition-all group cursor-pointer border border-transparent shadow-sm hover:shadow-md">
+                  <div className="flex gap-5 items-start">
+                    <div className="w-14 h-14 rounded-xl bg-[#F8F9FC] flex-shrink-0 flex items-center justify-center font-black text-slate-900 text-2xl border border-slate-100">
+                      {companyName(job)[0]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start mb-1">
+                        <div>
+                          <h3 className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors truncate pr-4">{job.title}</h3>
+                          <p className="text-sm font-medium text-slate-500">{companyName(job)}</p>
+                        </div>
+                        <button className="text-slate-300 hover:text-black transition"><FaBookmark /></button>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-xs text-slate-500 font-medium mt-3 mb-4">
+                        <span className="flex items-center gap-1"><FaMapMarkerAlt className="text-slate-300" /> {job.location}</span>
+                        <span>•</span>
+                        <span>{job.type}</span>
+                        {job.salary && (
+                          <>
+                            <span>•</span>
+                            <span className="text-slate-900 font-bold">{job.salary}</span>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {job.techStack?.split(',').slice(0, 3).map((tech, i) => (
+                          <span key={i} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-xs font-bold text-slate-600">
+                            {tech.trim()}
+                          </span>
+                        ))}
+                        {job.seniority && (
+                          <span className="px-3 py-1 bg-blue-50 border border-blue-100 rounded-lg text-xs font-bold text-blue-600">
+                            {job.seniority}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filteredJobs.length === 0 && (
+                <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
+                  <p className="text-slate-400 font-bold">No jobs matching your filters.</p>
+                  <button
+                    onClick={() => { setIndustry(""); setSeniority([]); setTechStack(""); setSearchQuery(""); }}
+                    className="mt-4 text-sm font-bold text-blue-600 hover:underline"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDEBAR - PROFILE */}
+        <div className="hidden lg:block lg:col-span-3 space-y-6">
+          {/* Simplified Profile Card */}
+          <div className="dashboard-card p-6 bg-white text-center border border-slate-100">
+            <div className="w-24 h-24 mx-auto rounded-full bg-slate-100 mb-4 overflow-hidden border-4 border-white shadow-lg relative">
+              <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}&background=1e293b&color=ffffff`} alt="User" className="w-full h-full object-cover" />
+            </div>
+            <h3 className="font-bold text-xl text-slate-900">{user?.name || "Guest User"}</h3>
+            <p className="text-sm text-slate-500 mb-6 font-medium bg-slate-50 inline-block px-3 py-1 rounded-full mt-2">Job Seeker</p>
+
+            <div className="grid grid-cols-2 gap-2 text-left mb-6">
+              {/* Removed Fake Stats - replaced with Project Links potentially or just minimal info */}
+            </div>
+
+            <button className="w-full py-3 bg-black hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-colors shadow-lg">
+              Edit Profile
+            </button>
+          </div>
+
+          {/* Generic Promo Card */}
+          <div className="dashboard-card p-8 bg-gradient-to-br from-blue-600 to-indigo-700 text-center relative overflow-hidden text-white border-none">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+            <div className="relative z-10">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center backdrop-blur-sm">
+                <span className="text-3xl">🚀</span>
+              </div>
+              <h3 className="font-bold text-xl mb-3">Boost Your Career</h3>
+              <p className="text-blue-100 text-sm mb-6 leading-relaxed">
+                Complete your profile to get 3x more visibility to top recruiters.
+              </p>
+              <button className="w-full py-3.5 bg-white text-blue-600 font-black rounded-xl shadow-lg hover:bg-blue-50 transition transform hover:-translate-y-0.5">
+                Complete Profile
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -439,4 +293,4 @@ const SearchJobs = () => {
   );
 };
 
-export default SearchJobs;
+export default Jobs;

@@ -31,8 +31,8 @@ model Job {
   location        String
   type            String    // Full-time, Internship, etc.
   remote          Boolean   @default(false)
-  description     String    @db.Text
-  requirements    String    @db.Text
+  description     String    @db.LongText
+  requirements    String    @db.LongText
   salary          String?
   platform        String?
   techStack       String?   // comma separated or JSON
@@ -42,6 +42,10 @@ model Job {
   creatorId       String
   creator         User      @relation("UserJobs", fields: [creatorId], references: [id])
   applications    Application[]
+
+  // External Job Fields
+  externalId      String?   @unique
+  applyUrl        String?
 }
 
 model Application {
