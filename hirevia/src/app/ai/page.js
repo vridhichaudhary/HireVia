@@ -38,10 +38,10 @@ const AiHub = () => {
                         <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Advanced Career Intelligence</span>
                     </motion.div>
                     <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-8">
-                        The <span className="text-blue-600">FAANG-Ready</span> AI Career Assistant.
+                        The AI Career Assistant.
                     </h1>
                     <p className="text-lg text-slate-500 font-medium leading-relaxed">
-                        Optimize your job search with institutional-grade AI. Our proprietary models analyze, match, and generate application materials to give you an unfair advantage.
+                        Optimize your job search with institutional-grade AI.
                     </p>
                 </header>
 

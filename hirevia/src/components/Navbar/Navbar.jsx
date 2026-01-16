@@ -121,18 +121,20 @@ const Navbar = () => {
     { name: "AI Hub", href: "/ai", icon: <FaRobot className="mr-2" /> },
   ];
 
+  const isHome = pathName === "/";
+  const transparentHeader = isHome && !isScrolled;
   const isActive = (path) => pathName === path;
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-white"} h-20 flex items-center px-6 md:px-10 border-b border-slate-100`}>
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100" : transparentHeader ? "bg-transparent border-b border-white/5" : "bg-white border-b border-slate-100"} h-20 flex items-center px-6 md:px-10`}>
         <div className="flex items-center justify-between w-full max-w-[1600px] mx-auto">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 z-50">
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white">
-              <span className="font-bold text-lg">h</span>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg transition-colors ${transparentHeader ? "bg-white text-slate-900" : "bg-black text-white"}`}>
+              <span>h</span>
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900">hirevia</span>
+            <span className={`text-xl font-bold tracking-tight transition-colors ${transparentHeader ? "text-white" : "text-slate-900"}`}>hirevia</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -142,8 +144,8 @@ const Navbar = () => {
                 key={link.name}
                 href={link.href}
                 className={`flex items-center text-sm font-medium transition-all relative h-20 ${isActive(link.href)
-                  ? "text-slate-900 font-bold border-b-2 border-black"
-                  : "text-slate-500 hover:text-slate-900"
+                  ? transparentHeader ? "text-white font-bold border-b-2 border-white" : "text-slate-900 font-bold border-b-2 border-black"
+                  : transparentHeader ? "text-slate-300 hover:text-white" : "text-slate-500 hover:text-slate-900"
                   }`}
               >
                 {link.name}
@@ -157,13 +159,13 @@ const Navbar = () => {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => { setIsSignup(false); setShowAuthModal(true); }}
-                  className="text-slate-600 hover:text-black font-bold text-sm transition-colors"
+                  className={`font-bold text-sm transition-colors ${transparentHeader ? "text-white hover:text-blue-100" : "text-slate-600 hover:text-black"}`}
                 >
                   Log In
                 </button>
                 <button
                   onClick={() => { setIsSignup(true); setShowAuthModal(true); }}
-                  className="bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-slate-800 transition-all"
+                  className={`px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg transition-all ${transparentHeader ? "bg-white text-slate-900 hover:bg-slate-100" : "bg-black text-white hover:bg-slate-800"}`}
                 >
                   Sign Up
                 </button>

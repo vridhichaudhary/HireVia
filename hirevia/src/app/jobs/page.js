@@ -248,17 +248,18 @@ const Jobs = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-10 px-6 bg-[#F8F9FC]">
-      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div className="min-h-screen pt-28 pb-20 px-6 bg-[#F8F9FC]">
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
 
         {/* LEFT SIDEBAR - FILTERS */}
-        <div className="hidden lg:block lg:col-span-3 space-y-6">
-          <div className="bg-white p-7 rounded-3xl border border-slate-100 shadow-sm sticky top-24">
-            <div className="flex justify-between items-center mb-8">
-              <h3 className="font-black text-xs uppercase tracking-[0.2em] text-slate-900">Filters</h3>
+        <div className="hidden lg:block lg:col-span-3 space-y-8">
+          {/* Filters Header */}
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 sticky top-28 shadow-sm">
+            <div className="flex justify-between items-center mb-8 pb-6 border-b border-slate-100">
+              <h3 className="font-black text-xs uppercase tracking-widest text-slate-900">Filters</h3>
               <button
                 onClick={() => { setIndustry(""); setSeniority([]); setTechStack(""); setPage(1); }}
-                className="text-xs text-slate-400 hover:text-black font-semibold"
+                className="text-[10px] font-bold text-blue-600 hover:text-blue-700 uppercase tracking-wider"
               >
                 Clear All
               </button>
@@ -266,11 +267,11 @@ const Jobs = () => {
 
             {/* Industry */}
             <div className="mb-8">
-              <label className="text-sm font-bold text-slate-700 mb-3 block">Industry</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">Industry</label>
               <select
                 value={industry}
                 onChange={(e) => { setIndustry(e.target.value); setPage(1); }}
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer"
               >
                 <option value="">All Industries</option>
                 <option value="Software Development">Software</option>
@@ -282,11 +283,11 @@ const Jobs = () => {
 
             {/* Seniority */}
             <div className="mb-8">
-              <label className="text-sm font-bold text-slate-700 mb-3 block">Seniority Level</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 block">Seniority</label>
               <div className="space-y-3">
                 {["Junior", "Mid", "Senior", "Lead", "Principal"].map((level) => (
                   <label key={level} className="flex items-center gap-3 cursor-pointer group">
-                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${seniority.includes(level) ? "bg-black border-black" : "border-slate-300 bg-white group-hover:border-slate-400"}`}>
+                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${seniority.includes(level) ? "bg-slate-900 border-slate-900" : "border-slate-300 bg-white group-hover:border-slate-400"}`}>
                       {seniority.includes(level) && <div className="w-2 h-2 bg-white rounded-full" />}
                     </div>
                     <span className="text-sm text-slate-600 font-medium group-hover:text-slate-900">{level}</span>
@@ -319,15 +320,15 @@ const Jobs = () => {
         </div>
 
         {/* CENTER CONTENT - FEED */}
-        <div className="lg:col-span-6 space-y-8">
+        <div className="lg:col-span-6 space-y-12">
           {/* Header / Search */}
-          <div className="p-4 flex items-center gap-4 bg-white/80 border border-slate-100/50 backdrop-blur-xl rounded-2xl sticky top-24 z-30 shadow-sm shadow-slate-200/50">
-            <div className="flex-1 flex items-center gap-3 px-3">
+          <div className="p-2 bg-white border border-slate-200/60 backdrop-blur-xl rounded-2xl sticky top-28 z-30 shadow-lg shadow-slate-200/40">
+            <div className="flex items-center gap-4 px-4 py-2">
               <FaSearch className="text-slate-400 text-sm" />
               <input
                 type="text"
-                placeholder="Search by job title or company..."
-                className="w-full text-base font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none bg-transparent"
+                placeholder="Search by job title, company, or keywords..."
+                className="w-full text-base font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none bg-transparent h-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -335,29 +336,29 @@ const Jobs = () => {
           </div>
 
           {/* Popular Section */}
-          <div>
-            <div className="flex justify-between items-end mb-4 px-1">
-              <h2 className="text-xl font-bold text-slate-900">Featured Opportunities</h2>
+          <div className="space-y-6">
+            <div className="flex justify-between items-end px-1">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Featured Opportunities</h2>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+            <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x pt-2">
               {popularJobs.map((job) => (
                 <div
                   key={job.id}
                   onClick={() => setSelectedJob(job)}
-                  className="min-w-[280px] bg-white p-6 rounded-3xl flex flex-col gap-5 snap-start hover:shadow-xl hover:shadow-slate-200/50 transition-all border border-slate-100 cursor-pointer group"
+                  className="min-w-[300px] bg-white p-6 rounded-[1.5rem] flex flex-col gap-6 snap-start hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/5 transition-all border border-slate-200 cursor-pointer group"
                 >
                   <div className="flex justify-between items-start">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors flex items-center justify-center font-black text-slate-900 text-xl">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors flex items-center justify-center font-black text-slate-900 text-xl shadow-sm">
                       {companyName(job)[0]}
                     </div>
-                    <button className="text-slate-200 hover:text-black transition"><FaBookmark /></button>
+                    <button className="text-slate-300 hover:text-black transition"><FaBookmark /></button>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-base mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">{job.title}</h3>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">{companyName(job)}</p>
+                    <h3 className="font-black text-slate-900 text-lg mb-1.5 line-clamp-1 group-hover:text-blue-600 transition-colors">{job.title}</h3>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{companyName(job)}</p>
                   </div>
-                  <div className="mt-auto pt-4 flex items-center justify-between gap-2">
-                    <span className="px-2.5 py-1 bg-slate-100 rounded-md text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+                  <div className="mt-auto pt-4 flex items-center justify-between gap-2 border-t border-slate-50">
+                    <span className="px-3 py-1.5 bg-slate-50 rounded-lg text-[10px] font-bold text-slate-600 uppercase tracking-widest">
                       {job.type || 'Full Time'}
                     </span>
                     <button
@@ -365,9 +366,9 @@ const Jobs = () => {
                         e.stopPropagation();
                         setSelectedJob(job);
                       }}
-                      className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[10px] font-black rounded-lg transition-all shadow-sm active:scale-95"
+                      className="px-5 py-2.5 bg-black hover:bg-slate-800 text-white text-[10px] font-black rounded-xl transition-all shadow-md active:scale-95"
                     >
-                      View Details
+                      View
                     </button>
                   </div>
                 </div>
@@ -376,66 +377,50 @@ const Jobs = () => {
           </div>
 
           {/* Now Hiring Section */}
-          <div>
-            <div className="flex justify-between items-center mb-6 px-1">
-              <h2 className="text-xl font-bold text-slate-900">Recent Postings</h2>
-              <span className="text-sm font-bold text-slate-500">{pagination.totalCount || 0} results</span>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center px-1">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Recent Postings</h2>
+              <span className="text-sm font-bold text-slate-400 bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm">{pagination.totalCount || 0} results</span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               {jobs.map((job) => (
                 <div
                   key={job.id}
                   onClick={() => setSelectedJob(job)}
-                  className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all group cursor-pointer"
+                  className="bg-white p-7 rounded-[1.5rem] border border-slate-200 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-900/5 transition-all group cursor-pointer relative"
                 >
                   <div className="flex gap-6 items-start">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center font-black text-slate-900 text-2xl border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center font-black text-slate-700 text-xl border border-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-colors shadow-sm">
                       {companyName(job)[0]}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start mb-1">
+                      <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h3 className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors truncate pr-4">{job.title}</h3>
-                          <p className="text-sm font-medium text-slate-500">{companyName(job)}</p>
+                          <h3 className="font-black text-lg text-slate-900 group-hover:text-blue-700 transition-colors truncate pr-8">{job.title}</h3>
+                          <p className="text-sm font-bold text-slate-500">{companyName(job)}</p>
                         </div>
-                        <button className="text-slate-300 hover:text-black transition"><FaBookmark /></button>
+                        {/* Status / Date or Bookmark */}
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-50 text-slate-500 px-2 py-1 rounded-md">{job.type}</span>
                       </div>
 
-                      <div className="flex items-center gap-3 text-xs text-slate-500 font-medium mt-3 mb-4">
-                        <span className="flex items-center gap-1"><FaMapMarkerAlt className="text-slate-300" /> {job.location}</span>
-                        <span>•</span>
-                        <span>{job.type}</span>
+                      <div className="flex items-center gap-5 text-xs text-slate-500 font-bold mt-4 mb-5">
+                        <span className="flex items-center gap-2"><FaMapMarkerAlt className="text-slate-300" /> {job.location}</span>
                         {job.salary && (
-                          <>
-                            <span>•</span>
-                            <span className="text-slate-900 font-bold">{job.salary}</span>
-                          </>
+                          <span className="flex items-center gap-2"><FaDollarSign className="text-slate-300" /> {job.salary}</span>
                         )}
+                        <span className="flex items-center gap-2"><FaBriefcase className="text-slate-300" /> {job.seniority || 'Mid-Level'}</span>
                       </div>
 
-                      <div className="flex items-center justify-between gap-2 mt-4 flex-wrap">
+                      <div className="flex items-center justify-between gap-3 pt-5 border-t border-slate-50">
                         <div className="flex items-center gap-2 flex-wrap">
                           {job.techStack?.split(',').slice(0, 3).map((tech, i) => (
-                            <span key={i} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-xs font-bold text-slate-600">
+                            <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg text-[11px] font-bold text-slate-600">
                               {tech.trim()}
                             </span>
                           ))}
-                          {job.seniority && (
-                            <span className="px-3 py-1 bg-blue-50 border border-blue-100 rounded-lg text-xs font-bold text-blue-600">
-                              {job.seniority}
-                            </span>
-                          )}
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedJob(job);
-                          }}
-                          className="px-5 py-2.5 bg-white border border-black hover:bg-slate-50 text-black text-[11px] font-black rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center gap-2"
-                        >
-                          View Details
-                        </button>
+                        <span className="text-xs font-black text-blue-600 group-hover:underline flex items-center gap-1">Detailed View <FaChevronCircleDown /></span>
                       </div>
                     </div>
                   </div>
@@ -481,20 +466,20 @@ const Jobs = () => {
         </div>
 
         {/* RIGHT SIDEBAR - PROFILE */}
-        <div className="hidden lg:block lg:col-span-3 space-y-6">
+        <div className="hidden lg:block lg:col-span-3 space-y-8">
           {/* Simplified Profile Card */}
-          <div className="dashboard-card p-6 bg-white text-center border border-slate-100">
-            <div className="w-24 h-24 mx-auto rounded-full bg-slate-100 mb-4 overflow-hidden border-4 border-white shadow-lg relative">
-              <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}&background=1e293b&color=ffffff`} alt="User" className="w-full h-full object-cover" />
+          <div className="dashboard-card p-8 bg-white text-center border border-slate-200 shadow-sm sticky top-28">
+            <div className="w-24 h-24 mx-auto rounded-full bg-slate-50 mb-4 overflow-hidden border-4 border-white shadow-lg relative">
+              <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}&background=0f172a&color=ffffff`} alt="User" className="w-full h-full object-cover" />
             </div>
-            <h3 className="font-bold text-xl text-slate-900">{user?.name || "Guest User"}</h3>
-            <p className="text-sm text-slate-500 mb-6 font-medium bg-slate-50 inline-block px-3 py-1 rounded-full mt-2">Job Seeker</p>
+            <h3 className="font-black text-xl text-slate-900">{user?.name || "Guest User"}</h3>
+            <p className="text-xs text-slate-500 mb-6 font-bold bg-slate-50 inline-block px-3 py-1 rounded-full mt-2 uppercase tracking-wide">Job Seeker</p>
 
             <div className="grid grid-cols-2 gap-2 text-left mb-6">
               {/* Removed Fake Stats - replaced with Project Links potentially or just minimal info */}
             </div>
 
-            <button className="w-full py-3 bg-black hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-colors shadow-lg">
+            <button className="w-full py-3.5 bg-black hover:bg-slate-800 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-colors shadow-lg active:scale-95">
               Edit Profile
             </button>
           </div>

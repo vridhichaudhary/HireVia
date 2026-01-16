@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F8F9FC;
-  /* Light Gray Dashboard Background */
+  --background: #FFFFFF;
+  /* Clean White Background */
   --sidebar-bg: #FFFFFF;
-  --foreground: #1E293B;
-  /* Slate 800 */
-  --primary: #111827;
-  /* Black for primary buttons */
-  --accent: #2DD4BF;
-  /* Teal 400 */
+  --foreground: #0F172A;
+  /* Slate 900 - High Contrast Text */
+  --primary: #0F172A;
+  /* Deep Navy for primary actions */
+  --primary-blue: #1D4ED8;
+  /* Strong Royal Blue */
+  --accent: #3B82F6;
+  /* Bright Blue */
   --accent-foreground: #FFFFFF;
-  --muted: #94A3B8;
-  /* Slate 400 */
+  --muted: #64748B;
+  /* Slate 500 */
   --border: #E2E8F0;
   /* Slate 200 */
   --card-bg: #FFFFFF;

@@ -21,16 +21,16 @@ const Home = () => {
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl font-bold tracking-tight mb-4 text-slate-900"
+              className="text-3xl font-black tracking-tight mb-4 text-slate-900"
             >
-              Why Professionals Choose <span className="text-blue-600">HireVia</span>
+              Why Professionals Choose <span className="text-slate-900">HireVia</span>
             </motion.h2>
             <p className="text-slate-500 text-base max-w-2xl mx-auto leading-relaxed">
               A unified platform designed to streamline your job search across multiple networks.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { icon: <FaSearch />, title: "Unified Search", desc: "Seamless integration with LinkedIn, Naukri, and Internshala." },
               { icon: <FaTasks />, title: "Application Tracker", desc: "Organize and track your applications in one professional dashboard." },
@@ -45,14 +45,13 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                whileHover={{ y: -3 }}
-                className="dashboard-card p-8 bg-white rounded-2xl space-y-4 hover:shadow-md transition-all border border-slate-100"
+                className="group p-8 bg-white rounded-xl border border-slate-200 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300"
               >
-                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 text-xl border border-blue-100">
+                <div className="w-12 h-12 bg-slate-50 rounded-lg flex items-center justify-center text-slate-700 text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">{feature.title}</h3>
-                <p className="text-slate-500 text-[13px] font-medium leading-relaxed">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{feature.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">
                   {feature.desc}
                 </p>
               </motion.div>
