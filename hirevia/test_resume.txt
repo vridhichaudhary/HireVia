@@ -1,8 +1,0 @@
-Pranshu Gupta
-Software Engineer
-Skills: React, Node.js, JavaScript, Python, PostgreSQL, AWS.
-Experience:
-- Senior Developer at TechCorp: Led the development of a high-traffic e-commerce platform using React and Node.js. Optimized database queries resulting in a 30% performance boost.
-- Frontend Engineer at StartupInc: Built responsive UIs and integrated complex APIs.
-Education: Bachelor of Technology in Computer Science.
-Projects: AI Resume Analyzer, E-commerce Dashboard.

@@ -468,20 +468,16 @@ const Jobs = () => {
         {/* RIGHT SIDEBAR - PROFILE */}
         <div className="hidden lg:block lg:col-span-3 space-y-8">
           {/* Simplified Profile Card */}
-          <div className="dashboard-card p-8 bg-white text-center border border-slate-200 shadow-sm sticky top-28">
-            <div className="w-24 h-24 mx-auto rounded-full bg-slate-50 mb-4 overflow-hidden border-4 border-white shadow-lg relative">
+          <div className="dashboard-card p-10 bg-white text-center border border-slate-200 shadow-sm sticky top-28">
+            <div className="w-24 h-24 mx-auto rounded-full bg-slate-50 mb-6 overflow-hidden border-4 border-white shadow-xl shadow-slate-200/50 relative">
               <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}&background=0f172a&color=ffffff`} alt="User" className="w-full h-full object-cover" />
             </div>
-            <h3 className="font-black text-xl text-slate-900">{user?.name || "Guest User"}</h3>
-            <p className="text-xs text-slate-500 mb-6 font-bold bg-slate-50 inline-block px-3 py-1 rounded-full mt-2 uppercase tracking-wide">Job Seeker</p>
+            <h3 className="font-black text-2xl text-slate-900 tracking-tight">{user?.name || "Guest User"}</h3>
+            <p className="text-[10px] text-slate-500 font-bold bg-slate-50 inline-block px-4 py-1.5 rounded-full mt-3 uppercase tracking-widest border border-slate-100">Job Seeker</p>
 
-            <div className="grid grid-cols-2 gap-2 text-left mb-6">
-              {/* Removed Fake Stats - replaced with Project Links potentially or just minimal info */}
+            <div className="mt-8 pt-8 border-t border-slate-50 grid grid-cols-2 gap-4">
+              {/* Placeholder for future stats or completely empty for clean look */}
             </div>
-
-            <button className="w-full py-3.5 bg-black hover:bg-slate-800 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-colors shadow-lg active:scale-95">
-              Edit Profile
-            </button>
           </div>
 
         </div>
