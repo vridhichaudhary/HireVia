@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { FaBell, FaBriefcase, FaRobot } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { usePathname } from "next/navigation";
 
 const AuthForm = ({ isSignup, closeModal }) => {
@@ -27,26 +28,72 @@ const AuthForm = ({ isSignup, closeModal }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <div className="text-red-500 text-xs text-center font-bold bg-red-50 p-2 rounded">{error}</div>}
-      {isSignup && (
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
-          <input name="name" onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/5" placeholder="John Doe" required />
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-center mb-6">
+        {isSignup ? "Create your account" : "Welcome back"}
+      </h3>
+
+      <button
+        type="button"
+        onClick={() => window.location.href = "http://localhost:8080/api/auth/google"}
+        className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-semibold py-3 rounded-xl hover:bg-slate-50 transition-all hover:shadow-md"
+      >
+        <div className="text-xl">
+          <FcGoogle />
         </div>
-      )}
-      <div className="space-y-1">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
-        <input name="email" type="email" onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/5" placeholder="name@company.com" required />
-      </div>
-      <div className="space-y-1">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
-        <input name="password" type="password" onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/5" placeholder="••••••••" required />
-      </div>
-      <button type="submit" className="w-full bg-black text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
-        {isSignup ? "Create Account" : "Sign In"}
+        Continue with Google
       </button>
-    </form>
+
+      <div className="relative flex items-center gap-4 my-6 opacity-60">
+        <div className="h-[1px] bg-slate-200 flex-1"></div>
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Or continue with email</span>
+        <div className="h-[1px] bg-slate-200 flex-1"></div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {error && <div className="text-red-500 text-xs text-center font-bold bg-red-50 p-2 rounded">{error}</div>}
+        {isSignup && (
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Full Name</label>
+            <input
+              name="name"
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-slate-300 transition-all font-medium placeholder:text-slate-400"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+        )}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Email Address</label>
+          <input
+            name="email"
+            type="email"
+            onChange={handleChange}
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-slate-300 transition-all font-medium placeholder:text-slate-400"
+            placeholder="name@company.com"
+            required
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Password</label>
+          <input
+            name="password"
+            type="password"
+            onChange={handleChange}
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-slate-300 transition-all font-medium placeholder:text-slate-400"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-black transition-all shadow-xl shadow-slate-200 active:scale-[0.98]"
+        >
+          {isSignup ? "Create Account" : "Sign In"}
+        </button>
+      </form>
+    </div>
   );
 };
 
