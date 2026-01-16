@@ -131,10 +131,10 @@ const Navbar = () => {
         <div className="flex items-center justify-between w-full max-w-[1600px] mx-auto">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 z-50">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg transition-colors ${transparentHeader ? "bg-white text-slate-900" : "bg-black text-white"}`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg transition-colors ${transparentHeader ? "bg-slate-900 text-white" : "bg-black text-white"}`}>
               <span>h</span>
             </div>
-            <span className={`text-xl font-bold tracking-tight transition-colors ${transparentHeader ? "text-white" : "text-slate-900"}`}>hirevia</span>
+            <span className={`text-xl font-bold tracking-tight transition-colors ${transparentHeader ? "text-slate-900" : "text-slate-900"}`}>hirevia</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -144,8 +144,8 @@ const Navbar = () => {
                 key={link.name}
                 href={link.href}
                 className={`flex items-center text-sm font-medium transition-all relative h-20 ${isActive(link.href)
-                  ? transparentHeader ? "text-white font-bold border-b-2 border-white" : "text-slate-900 font-bold border-b-2 border-black"
-                  : transparentHeader ? "text-slate-300 hover:text-white" : "text-slate-500 hover:text-slate-900"
+                  ? transparentHeader ? "text-slate-900 font-bold border-b-2 border-slate-900" : "text-slate-900 font-bold border-b-2 border-black"
+                  : transparentHeader ? "text-slate-500 hover:text-slate-900" : "text-slate-500 hover:text-slate-900"
                   }`}
               >
                 {link.name}
@@ -159,13 +159,13 @@ const Navbar = () => {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => { setIsSignup(false); setShowAuthModal(true); }}
-                  className={`font-bold text-sm transition-colors ${transparentHeader ? "text-white hover:text-blue-100" : "text-slate-600 hover:text-black"}`}
+                  className={`font-bold text-sm transition-colors ${transparentHeader ? "text-slate-600 hover:text-black" : "text-slate-600 hover:text-black"}`}
                 >
                   Log In
                 </button>
                 <button
                   onClick={() => { setIsSignup(true); setShowAuthModal(true); }}
-                  className={`px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg transition-all ${transparentHeader ? "bg-white text-slate-900 hover:bg-slate-100" : "bg-black text-white hover:bg-slate-800"}`}
+                  className={`px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg transition-all ${transparentHeader ? "bg-slate-900 text-white hover:bg-slate-800" : "bg-black text-white hover:bg-slate-800"}`}
                 >
                   Sign Up
                 </button>
