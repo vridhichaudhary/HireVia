@@ -71,7 +71,3 @@ body {
   pointer-events: none;
   z-index: -1;
 }
-
-.pro-badge {
-  @apply px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-white/5 border border-white/10 text-slate-300;
-}

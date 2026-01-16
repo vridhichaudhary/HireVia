@@ -109,7 +109,7 @@ const JDMatcher = () => {
                                         <div>
                                             <h3 className="text-2xl font-black text-slate-900 leading-tight">Match Quality</h3>
                                             <p className="text-slate-500 font-medium mt-2 leading-relaxed italic">
-                                                "{result.summary || "Your profile has been cross-referenced with the job requirements."}"
+                                                &quot;{result.summary || "Your profile has been cross-referenced with the job requirements."}&quot;
                                             </p>
                                         </div>
                                     </div>

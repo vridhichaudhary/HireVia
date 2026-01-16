@@ -123,7 +123,7 @@ const ResumeAnalyzer = () => {
                             <div className="flex-1 space-y-4 text-center md:text-left">
                                 <h3 className="text-2xl font-black text-slate-900 leading-tight">{result.summary_title || "Analysis Complete"}</h3>
                                 <p className="text-slate-500 font-medium leading-relaxed italic">
-                                    "{result.overall_feedback || "Your resume has been parsed and audited against industry standards."}"
+                                    &quot;{result.overall_feedback || "Your resume has been parsed and audited against industry standards."}&quot;
                                 </p>
                                 <button
                                     onClick={() => setResult(null)}

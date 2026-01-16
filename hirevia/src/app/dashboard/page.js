@@ -108,8 +108,8 @@ const Dashboard = () => {
                                         </div>
                                         <div className="text-right">
                                             <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${item.status === 'Interview' ? 'bg-blue-50 text-blue-600' :
-                                                    item.status === 'Screening' ? 'bg-indigo-50 text-indigo-600' :
-                                                        'bg-slate-100 text-slate-600'
+                                                item.status === 'Screening' ? 'bg-indigo-50 text-indigo-600' :
+                                                    'bg-slate-100 text-slate-600'
                                                 }`}>
                                                 {item.status}
                                             </span>
@@ -137,7 +137,7 @@ const Dashboard = () => {
                                 </div>
                                 <h4 className="text-xl font-black tracking-tighter">FAANG Ready.</h4>
                                 <p className="text-[12px] text-slate-400 font-medium leading-relaxed">
-                                    Your technical profile cluster is currently trending for "Staff Engineer" roles at Tier-1 institutions.
+                                    Your technical profile cluster is currently trending for &quot;Staff Engineer&quot; roles at Tier-1 institutions.
                                 </p>
                             </div>
 

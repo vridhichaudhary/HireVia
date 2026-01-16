@@ -74,7 +74,7 @@ const AiHub = () => {
                     <div className="relative z-10 max-w-2xl">
                         <h2 className="text-3xl font-black text-white mb-6">Built for top-tier engineers.</h2>
                         <p className="text-slate-400 font-medium mb-8 leading-relaxed">
-                            Our AI engine isn't just about text. It understands seniority levels, tech stack importance, and the specific nuances of modern hiring pipelines.
+                            Our AI engine isn&apos;t just about text. It understands seniority levels, tech stack importance, and the specific nuances of modern hiring pipelines.
                         </p>
                         <div className="flex gap-4">
                             <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-black text-slate-300 uppercase tracking-wider">
