@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
-import { FaBell, FaBriefcase } from "react-icons/fa";
+import { FaBell, FaBriefcase, FaRobot } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
 const AuthForm = ({ isSignup, closeModal }) => {
@@ -71,6 +71,7 @@ const Navbar = () => {
     { name: "Home", href: "/", icon: null },
     { name: "Find Jobs", href: "/jobs", icon: <FaBriefcase className="mr-2" /> },
     { name: "Tracker", href: "/tracker", icon: null },
+    { name: "AI Hub", href: "/ai", icon: <FaRobot className="mr-2" /> },
   ];
 
   const isActive = (path) => pathName === path;
@@ -122,10 +123,6 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center gap-6">
-                <button className="text-slate-400 hover:text-slate-900 transition-colors relative">
-                  <FaBell className="text-xl" />
-                  <span className="absolute top-0 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                </button>
 
                 <div className="h-8 w-[1px] bg-slate-200"></div>
 

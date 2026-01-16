@@ -1,12 +1,78 @@
 "use client";
-import { FaBriefcase, FaChevronRight } from "react-icons/fa";
 import React, { useEffect, useState } from 'react';
-import Footer from '@/components/Footer/Footer';
+import {
+  FaBriefcase,
+  FaChevronDown,
+  FaTrash,
+  FaMapMarkerAlt,
+  FaClock,
+  FaBuilding,
+  FaExternalLinkAlt,
+  FaCheckCircle
+} from "react-icons/fa";
 import Link from 'next/link';
 import API from "@/api/axios";
 import { useAuth } from "@/context/AuthContext";
+import { motion, AnimatePresence } from 'framer-motion';
 
-const STAGES = ["Applied", "Interviewing", "Offer", "Rejected"];
+const STAGES = [
+  { label: "Applied", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
+  { label: "Pending", color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-100" },
+  { label: "Interviewing", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
+  { label: "Offer", color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-100" },
+  { label: "Rejected", color: "text-rose-600", bg: "bg-rose-50", border: "border-rose-100" }
+];
+
+const StatusDropdown = ({ currentStatus, onUpdate }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const activeStage = STAGES.find(s => s.label === currentStatus) || STAGES[0];
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${activeStage.bg} ${activeStage.color} ${activeStage.border} hover:shadow-sm active:scale-95`}
+      >
+        {activeStage.label}
+        <FaChevronDown className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-20 py-2 overflow-hidden"
+            >
+              {STAGES.map((stage) => (
+                <button
+                  key={stage.label}
+                  onClick={() => {
+                    onUpdate(stage.label);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wide transition-colors hover:bg-slate-50 ${currentStatus === stage.label ? stage.color : 'text-slate-600'
+                    }`}
+                >
+                  <div className={`w-2 h-2 rounded-full ${stage.label === 'Applied' ? 'bg-blue-400' :
+                    stage.label === 'Pending' ? 'bg-amber-400' :
+                      stage.label === 'Interviewing' ? 'bg-purple-400' :
+                        stage.label === 'Offer' ? 'bg-emerald-400' : 'bg-rose-400'
+                    }`} />
+                  {stage.label}
+                  {currentStatus === stage.label && <FaCheckCircle className="ml-auto text-current opacity-50" />}
+                </button>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const ApplicationTracker = () => {
   const { user, loading: authLoading } = useAuth();
@@ -44,6 +110,7 @@ const ApplicationTracker = () => {
   };
 
   const removeApplication = async (id) => {
+    if (!confirm("Remove this application from your tracker?")) return;
     try {
       await API.delete(`/applications/${id}`);
       setApplications((prev) => prev.filter((app) => app.id !== id));
@@ -53,125 +120,167 @@ const ApplicationTracker = () => {
   };
 
   if (authLoading || loading) {
-    return <div className="min-h-screen bg-background text-slate-500 flex items-center justify-center uppercase font-bold tracking-widest text-xs">Synchronizing Pipeline...</div>;
+    return (
+      <div className="min-h-screen bg-[#F8F9FC] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] animate-pulse">Synchronizing Pipeline</p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background text-white flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-bold uppercase mb-4 tracking-tight">Access Restricted</h2>
-        <p className="text-slate-500 uppercase text-xs font-semibold mb-8 tracking-widest">Please login to access your professional pipeline</p>
-        <Link href="/auth-success">
-          <button className="bg-blue-600 text-white hover:bg-blue-500 px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20">Login via Gateway</button>
-        </Link>
+      <div className="min-h-screen bg-[#F8F9FC] flex flex-col items-center justify-center p-6 bg-grid-slate-100">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full dashboard-card p-10 text-center space-y-8 bg-white rounded-[2rem]"
+        >
+          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto text-slate-300 text-3xl border border-slate-100 shadow-inner">
+            <FaBriefcase />
+          </div>
+          <div className="space-y-3">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Access Restricted</h2>
+            <p className="text-slate-500 text-sm font-medium leading-relaxed">
+              Log in to sync your professional pipeline across all your devices and manage your career growth.
+            </p>
+          </div>
+          <Link href="/auth-success" className="block">
+            <button className="w-full bg-black text-white px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all hover:bg-slate-800 active:scale-[0.98] shadow-2xl shadow-slate-200">
+              Login via Gateway
+            </button>
+          </Link>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <section className="bg-background min-h-screen text-white pt-28 pb-20 px-6 md:px-20 relative overflow-hidden">
-      <div className="glow-mesh opacity-20" />
+    <div className="min-h-screen bg-[#F8F9FC] pt-28 pb-20 px-6 md:px-12 lg:px-20">
+      <div className="max-w-[1400px] mx-auto">
+        <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest border border-blue-100">
+              Professional Dashboard
+            </span>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+              Application <span className="text-blue-600">Pipeline</span>
+            </h1>
+            <p className="text-slate-400 text-sm font-medium">
+              You have <span className="text-slate-900 font-bold">{applications.length} active signals</span> in your acquisition funnel.
+            </p>
+          </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <header className="mb-12">
-          <h2 className="text-3xl font-bold tracking-tight mb-2 uppercase">
-            Application <span className="text-blue-400">Pipeline</span>
-          </h2>
-          <p className="text-slate-400 text-sm font-bold tracking-widest uppercase">
-            Manage your professional acquisition funnel
-          </p>
+          <Link href="/jobs">
+            <button className="px-6 py-3 bg-white border border-slate-200 rounded-xl text-[11px] font-black uppercase tracking-wider text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+              Explore Marketplace <FaExternalLinkAlt size={10} />
+            </button>
+          </Link>
         </header>
 
         {applications.length === 0 ? (
-          <div className="glass-card rounded-2xl py-20 flex flex-col items-center text-center space-y-6 border border-white/5">
-            <div className="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center text-slate-700 text-2xl border border-white/5">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[2.5rem] p-16 md:p-24 text-center space-y-8 border border-slate-100 shadow-sm"
+          >
+            <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto text-slate-200 text-4xl border border-slate-100 shadow-inner">
               <FaBriefcase />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold uppercase tracking-tight text-slate-400">Pipeline Empty</h3>
-              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest max-w-xs mx-auto">
-                No active signals detected. Initialize your search in the marketplace.
+            <div className="space-y-4">
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Pipeline Empty</h3>
+              <p className="text-slate-400 text-sm font-medium max-w-sm mx-auto leading-relaxed">
+                Your career signals are currently flat. Visit the marketplace to initialize your search and track opportunities.
               </p>
             </div>
-            <Link href="/jobs">
-              <button className="bg-blue-600 text-white px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg hover:bg-blue-500 transition-all">
-                Access Marketplace
-              </button>
-            </Link>
-          </div>
+            <div className="pt-4">
+              <Link href="/jobs">
+                <button className="bg-black text-white px-10 py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95 leading-none">
+                  Open Job Marketplace
+                </button>
+              </Link>
+            </div>
+          </motion.div>
         ) : (
-          <div className="grid gap-8">
-            {STAGES.map((stage) => (
-              <div key={stage} className="space-y-4">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${stage === 'Applied' ? 'bg-slate-500' :
-                    stage === 'Interviewing' ? 'bg-blue-400' :
-                      stage === 'Offer' ? 'bg-emerald-400' : 'bg-red-400'
-                    }`} />
-                  {stage} ({applications.filter(a => a.status === stage).length})
-                </h3>
+          <div className="grid gap-4">
+            <div className="grid grid-cols-12 px-8 mb-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+              <div className="col-span-12 lg:col-span-5">Job & Company</div>
+              <div className="hidden lg:block lg:col-span-3">Status & Analytics</div>
+              <div className="hidden lg:block lg:col-span-2">Applied Date</div>
+              <div className="hidden lg:block lg:col-span-2 text-right">Settings</div>
+            </div>
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {applications.filter(a => a.status === stage).map((app) => (
-                    <div
-                      key={app.id}
-                      className="glass-card p-6 rounded-2xl border border-white/5 relative group h-full flex flex-col"
-                    >
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="text-lg font-bold group-hover:text-blue-400 transition-colors uppercase tracking-tight leading-tight">
-                            {app.job.title}
-                          </h3>
-                          <p className="text-blue-200 text-[10px] font-bold uppercase tracking-[0.2em] mt-1">
-                            {app.job.company}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => removeApplication(app.id)}
-                          className="text-slate-700 hover:text-red-500 transition-colors text-xs"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                          {app.job.location}
-                        </span>
-                        <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                          {app.job.type}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Shift Stage:</span>
-                        <div className="flex gap-1">
-                          {STAGES.filter(s => s !== stage).map(s => (
-                            <button
-                              key={s}
-                              onClick={() => updateStatus(app.id, s)}
-                              className="px-2 py-1 bg-slate-900/50 hover:bg-slate-800 border border-white/5 rounded text-[8px] font-bold uppercase tracking-tighter text-slate-400 transition-all"
-                            >
-                              {s}
-                            </button>
-                          ))}
-                        </div>
+            <div className="space-y-3">
+              {applications.map((app, index) => (
+                <motion.div
+                  key={app.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group bg-white p-6 md:px-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all grid grid-cols-1 md:grid-cols-12 items-center gap-6"
+                >
+                  {/* Job Info */}
+                  <div className="col-span-1 md:col-span-5 flex items-center gap-6">
+                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-900 font-black text-xl border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
+                      {app.job.company?.[0] || 'J'}
+                    </div>
+                    <div>
+                      <h4 className="text-base font-black text-slate-900 group-hover:text-blue-600 transition-colors leading-tight mb-1 capitalize">
+                        {app.job.title}
+                      </h4>
+                      <div className="flex items-center gap-3 text-slate-400 text-[11px] font-bold uppercase tracking-tight">
+                        <span className="flex items-center gap-1.5"><FaBuilding size={10} className="text-slate-300" /> {app.job.company}</span>
+                        <div className="w-1 h-1 rounded-full bg-slate-200" />
+                        <span className="flex items-center gap-1.5"><FaMapMarkerAlt size={10} className="text-slate-300" /> {app.job.location}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+                  </div>
+
+                  {/* Status Dropdown */}
+                  <div className="col-span-1 md:col-span-3 flex items-center gap-4">
+                    <StatusDropdown
+                      currentStatus={app.status}
+                      onUpdate={(s) => updateStatus(app.id, s)}
+                    />
+                  </div>
+
+                  {/* Applied Date */}
+                  <div className="col-span-1 md:col-span-2 flex items-center gap-2 text-slate-500 text-[11px] font-bold uppercase tracking-tight">
+                    <FaClock className="text-slate-300" />
+                    {new Date(app.appliedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-1 md:col-span-2 flex items-center justify-end gap-3">
+                    {app.job.applyUrl && (
+                      <a
+                        href={app.job.applyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 text-slate-400 hover:text-blue-600 bg-slate-50 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100"
+                        title="View Original Post"
+                      >
+                        <FaExternalLinkAlt size={12} />
+                      </a>
+                    )}
+                    <button
+                      onClick={() => removeApplication(app.id)}
+                      className="p-3 text-slate-400 hover:text-rose-600 bg-slate-50 rounded-xl border border-slate-100 hover:border-rose-100 hover:bg-rose-50 transition-all"
+                      title="Delete Application"
+                    >
+                      <FaTrash size={12} />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
 
-        <div className="mt-20">
-          <Footer />
-        </div>
       </div>
-    </section>
+    </div>
   );
 };
 

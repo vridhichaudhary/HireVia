@@ -2,13 +2,175 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
-import { FaSearch, FaMapMarkerAlt, FaBookmark, FaHeart } from "react-icons/fa";
+import { FaSearch, FaMapMarkerAlt, FaBookmark, FaHeart, FaTimes, FaBriefcase, FaBuilding, FaDollarSign, FaExternalLinkAlt, FaChevronCircleDown } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import API from "@/api/axios";
+
+const JobDetailsDrawer = ({ job, onClose }) => {
+  if (!job) return null;
+
+  const handleApply = async (e) => {
+    e.stopPropagation();
+
+    // Attempt to track in backend
+    try {
+      await API.post("/applications", { jobId: job.id });
+    } catch (error) {
+      console.error("Auto-tracking failed:", error);
+    }
+
+    if (job.applyUrl) {
+      window.open(job.applyUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      // Internal flow or fallback
+      alert("Application successfully submitted!");
+      onClose();
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {job && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+          />
+
+          {/* Drawer Panel */}
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="relative w-full max-w-2xl h-full bg-white shadow-2xl flex flex-col border-l border-slate-200"
+          >
+            {/* Drawer Header */}
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-colors"
+                >
+                  <FaTimes size={18} />
+                </button>
+                <div className="h-4 w-[1px] bg-slate-200" />
+                <h2 className="text-sm font-black text-slate-900 uppercase tracking-[2px]">Job Details</h2>
+              </div>
+              <button
+                onClick={handleApply}
+                className="px-6 py-2.5 bg-black hover:bg-slate-800 text-white font-black rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-lg active:scale-95 flex items-center gap-2"
+              >
+                {job.applyUrl ? 'Apply Now' : 'Quick Apply'}
+                <FaExternalLinkAlt size={10} />
+              </button>
+            </div>
+
+            {/* Drawer Content */}
+            <div className="flex-1 overflow-y-auto p-8 space-y-12 custom-scrollbar">
+              {/* Title & Stats */}
+              <div className="space-y-6">
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-900 text-3xl shadow-sm">
+                    {job.company?.[0] || job.title[0]}
+                  </div>
+                  <div className="flex-1">
+                    <h1 className="text-3xl font-black text-slate-900 leading-tight mb-2">{job.title}</h1>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-bold text-slate-500">
+                      <span className="flex items-center gap-1.5 text-blue-600"><FaBuilding className="text-blue-200" /> {job.company}</span>
+                      <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-slate-300" /> {job.location}</span>
+                      <span className="flex items-center gap-1.5"><FaBriefcase className="text-slate-300" /> {job.type}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimated Salary</p>
+                    <p className="text-lg font-black text-slate-900">{job.salary || 'Competitive'}</p>
+                  </div>
+                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Seniority Level</p>
+                    <p className="text-lg font-black text-slate-900">{job.seniority || 'Mid-Level'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tech Stack */}
+              {job.techStack && (
+                <div>
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[2px] mb-6 flex items-center gap-3">
+                    <div className="h-1 w-1 rounded-full bg-blue-600" /> Technology Stack
+                  </h4>
+                  <div className="flex flex-wrap gap-2.5">
+                    {job.techStack.split(',').map((tech, i) => (
+                      <span key={i} className="px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[12px] font-black text-slate-700 hover:border-blue-300 transition-all cursor-default shadow-sm uppercase tracking-tight">
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Description */}
+              <div className="space-y-6">
+                <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[2px] flex items-center gap-3">
+                  <div className="h-1 w-1 rounded-full bg-blue-600" /> About the Role
+                </h4>
+                <div
+                  className="text-slate-600 leading-[1.8] text-base space-y-6 prose prose-slate max-w-none font-medium"
+                  dangerouslySetInnerHTML={{ __html: job.description }}
+                />
+              </div>
+
+              {/* Requirements */}
+              {job.requirements && (
+                <div className="space-y-6">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[2px] flex items-center gap-3">
+                    <div className="h-1 w-1 rounded-full bg-blue-600" /> Key Requirements
+                  </h4>
+                  <div className="text-slate-600 leading-relaxed text-base whitespace-pre-line p-8 bg-blue-50/30 rounded-3xl border border-blue-100/50 font-medium italic">
+                    {job.requirements}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Drawer Footer */}
+            <div className="p-8 border-t border-slate-100 bg-slate-50/50">
+              <div className="flex items-center justify-between gap-6">
+                <div className="text-left">
+                  <p className="text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Posted Via</p>
+                  <p className="text-sm font-black text-slate-900">{job.platform || 'HireVia Direct'}</p>
+                </div>
+                <button
+                  onClick={handleApply}
+                  className="px-12 py-4 bg-black hover:bg-slate-800 text-white font-black rounded-2xl text-sm uppercase tracking-widest transition-all shadow-2xl active:scale-95 flex items-center gap-3"
+                >
+                  Apply Now
+                  <FaExternalLinkAlt size={12} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const Jobs = () => {
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1 });
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedJob, setSelectedJob] = useState(null);
 
   // Real Filters
   const [industry, setIndustry] = useState("");
@@ -19,10 +181,30 @@ const Jobs = () => {
 
   // Fetch jobs from backend
   const fetchJobs = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/jobs`);
-      setJobs(response.data);
-      setPopularJobs(response.data.slice(0, 5)); // Just take first 5 as popular for now
+      const params = new URLSearchParams({
+        page,
+        limit: 10,
+        search: searchQuery,
+        industry,
+        techStack
+      });
+
+      // Add each seniority item as a separate parameter for prisma.in support
+      seniority.forEach(s => params.append('seniority', s));
+
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/jobs?${params.toString()}`);
+
+      const { jobs: fetchedJobs, pagination: pg } = response.data;
+      setJobs(fetchedJobs);
+      setPagination(pg);
+
+      // Update popular jobs only on first load if empty
+      if (popularJobs.length === 0) {
+        setPopularJobs(fetchedJobs.slice(0, 5));
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -32,26 +214,25 @@ const Jobs = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [page, industry, seniority, techStack]); // Refetch on filter change or page change
+
+  // Separate effect for search to avoid too many requests
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(1); // Reset page on search
+      fetchJobs();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const toggleSeniority = (level) => {
+    setPage(1); // Reset to page 1 on filter change
     if (seniority.includes(level)) {
       setSeniority(seniority.filter(s => s !== level));
     } else {
       setSeniority([...seniority, level]);
     }
   };
-
-  const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      companyName(job).toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesIndustry = industry ? job.industry === industry : true;
-    const matchesSeniority = seniority.length === 0 || (job.seniority && seniority.includes(job.seniority));
-    const matchesTechStack = techStack ? job.techStack?.toLowerCase().includes(techStack.toLowerCase()) : true;
-
-    return matchesSearch && matchesIndustry && matchesSeniority && matchesTechStack;
-  });
 
   // Helper to safely get company name
   function companyName(job) {
@@ -72,11 +253,11 @@ const Jobs = () => {
 
         {/* LEFT SIDEBAR - FILTERS */}
         <div className="hidden lg:block lg:col-span-3 space-y-6">
-          <div className="dashboard-card p-6 bg-white sticky top-24">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-bold text-lg text-slate-900">Filters</h3>
+          <div className="bg-white p-7 rounded-3xl border border-slate-100 shadow-sm sticky top-24">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="font-black text-xs uppercase tracking-[0.2em] text-slate-900">Filters</h3>
               <button
-                onClick={() => { setIndustry(""); setSeniority([]); setTechStack(""); }}
+                onClick={() => { setIndustry(""); setSeniority([]); setTechStack(""); setPage(1); }}
                 className="text-xs text-slate-400 hover:text-black font-semibold"
               >
                 Clear All
@@ -88,15 +269,14 @@ const Jobs = () => {
               <label className="text-sm font-bold text-slate-700 mb-3 block">Industry</label>
               <select
                 value={industry}
-                onChange={(e) => setIndustry(e.target.value)}
+                onChange={(e) => { setIndustry(e.target.value); setPage(1); }}
                 className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-black/5"
               >
                 <option value="">All Industries</option>
-                <option value="Tech">Tech</option>
-                <option value="Finance">Finance</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Design">Design</option>
+                <option value="Software Development">Software</option>
                 <option value="Marketing">Marketing</option>
+                <option value="Design">Design</option>
+                <option value="AI / ML">AI / ML</option>
               </select>
             </div>
 
@@ -141,9 +321,9 @@ const Jobs = () => {
         {/* CENTER CONTENT - FEED */}
         <div className="lg:col-span-6 space-y-8">
           {/* Header / Search */}
-          <div className="dashboard-card p-4 flex items-center gap-4 bg-white sticky top-24 z-30 shadow-sm border border-slate-100/50 backdrop-blur-xl bg-white/90">
-            <div className="flex-1 flex items-center gap-3 px-2">
-              <FaSearch className="text-slate-400" />
+          <div className="p-4 flex items-center gap-4 bg-white/80 border border-slate-100/50 backdrop-blur-xl rounded-2xl sticky top-24 z-30 shadow-sm shadow-slate-200/50">
+            <div className="flex-1 flex items-center gap-3 px-3">
+              <FaSearch className="text-slate-400 text-sm" />
               <input
                 type="text"
                 placeholder="Search by job title or company..."
@@ -161,24 +341,34 @@ const Jobs = () => {
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
               {popularJobs.map((job) => (
-                <div key={job.id} className="min-w-[280px] dashboard-card p-5 bg-white flex flex-col gap-4 snap-start hover:shadow-lg transition border border-slate-100">
+                <div
+                  key={job.id}
+                  onClick={() => setSelectedJob(job)}
+                  className="min-w-[280px] bg-white p-6 rounded-3xl flex flex-col gap-5 snap-start hover:shadow-xl hover:shadow-slate-200/50 transition-all border border-slate-100 cursor-pointer group"
+                >
                   <div className="flex justify-between items-start">
-                    <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-bold text-slate-900 text-xl">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors flex items-center justify-center font-black text-slate-900 text-xl">
                       {companyName(job)[0]}
                     </div>
-                    <button className="text-slate-300 hover:text-black transition"><FaBookmark /></button>
+                    <button className="text-slate-200 hover:text-black transition"><FaBookmark /></button>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-base mb-1 line-clamp-1">{job.title}</h3>
+                    <h3 className="font-bold text-slate-900 text-base mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">{job.title}</h3>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">{companyName(job)}</p>
                   </div>
-                  <div className="mt-auto pt-4 flex items-center gap-2">
+                  <div className="mt-auto pt-4 flex items-center justify-between gap-2">
                     <span className="px-2.5 py-1 bg-slate-100 rounded-md text-[10px] font-bold text-slate-600 uppercase tracking-widest">
                       {job.type || 'Full Time'}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-400 ml-auto">
-                      {job.location}
-                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedJob(job);
+                      }}
+                      className="px-4 py-2 bg-black hover:bg-slate-800 text-white text-[10px] font-black rounded-lg transition-all shadow-sm active:scale-95"
+                    >
+                      View Details
+                    </button>
                   </div>
                 </div>
               ))}
@@ -189,14 +379,18 @@ const Jobs = () => {
           <div>
             <div className="flex justify-between items-center mb-6 px-1">
               <h2 className="text-xl font-bold text-slate-900">Recent Postings</h2>
-              <span className="text-sm font-bold text-slate-500">{filteredJobs.length} results</span>
+              <span className="text-sm font-bold text-slate-500">{pagination.totalCount || 0} results</span>
             </div>
 
             <div className="space-y-4">
-              {filteredJobs.map((job) => (
-                <div key={job.id} className="dashboard-card p-6 bg-white hover:border-slate-300 transition-all group cursor-pointer border border-transparent shadow-sm hover:shadow-md">
-                  <div className="flex gap-5 items-start">
-                    <div className="w-14 h-14 rounded-xl bg-[#F8F9FC] flex-shrink-0 flex items-center justify-center font-black text-slate-900 text-2xl border border-slate-100">
+              {jobs.map((job) => (
+                <div
+                  key={job.id}
+                  onClick={() => setSelectedJob(job)}
+                  className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all group cursor-pointer"
+                >
+                  <div className="flex gap-6 items-start">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex-shrink-0 flex items-center justify-center font-black text-slate-900 text-2xl border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
                       {companyName(job)[0]}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -220,23 +414,58 @@ const Jobs = () => {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {job.techStack?.split(',').slice(0, 3).map((tech, i) => (
-                          <span key={i} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-xs font-bold text-slate-600">
-                            {tech.trim()}
-                          </span>
-                        ))}
-                        {job.seniority && (
-                          <span className="px-3 py-1 bg-blue-50 border border-blue-100 rounded-lg text-xs font-bold text-blue-600">
-                            {job.seniority}
-                          </span>
-                        )}
+                      <div className="flex items-center justify-between gap-2 mt-4 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {job.techStack?.split(',').slice(0, 3).map((tech, i) => (
+                            <span key={i} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-xs font-bold text-slate-600">
+                              {tech.trim()}
+                            </span>
+                          ))}
+                          {job.seniority && (
+                            <span className="px-3 py-1 bg-blue-50 border border-blue-100 rounded-lg text-xs font-bold text-blue-600">
+                              {job.seniority}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedJob(job);
+                          }}
+                          className="px-5 py-2.5 bg-white border border-black hover:bg-slate-50 text-black text-[11px] font-black rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center gap-2"
+                        >
+                          View Details
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-              {filteredJobs.length === 0 && (
+
+              {/* Pagination Controls */}
+              {pagination.totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-slate-100">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-sm font-bold text-slate-900">
+                    Page {page} of {pagination.totalPages}
+                  </span>
+                  <button
+                    onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
+                    disabled={page === pagination.totalPages}
+                    className="px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+
+              {jobs.length === 0 && (
                 <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
                   <p className="text-slate-400 font-bold">No jobs matching your filters.</p>
                   <button
@@ -270,25 +499,10 @@ const Jobs = () => {
             </button>
           </div>
 
-          {/* Generic Promo Card */}
-          <div className="dashboard-card p-8 bg-gradient-to-br from-blue-600 to-indigo-700 text-center relative overflow-hidden text-white border-none">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-            <div className="relative z-10">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl mx-auto mb-6 flex items-center justify-center backdrop-blur-sm">
-                <span className="text-3xl">🚀</span>
-              </div>
-              <h3 className="font-bold text-xl mb-3">Boost Your Career</h3>
-              <p className="text-blue-100 text-sm mb-6 leading-relaxed">
-                Complete your profile to get 3x more visibility to top recruiters.
-              </p>
-              <button className="w-full py-3.5 bg-white text-blue-600 font-black rounded-xl shadow-lg hover:bg-blue-50 transition transform hover:-translate-y-0.5">
-                Complete Profile
-              </button>
-            </div>
-          </div>
         </div>
 
       </div>
+      <JobDetailsDrawer job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
   );
 };

@@ -1,7 +1,9 @@
-"use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { addTrackedJob } from '@/utils/localStorageUtils';
+import API from '@/api/axios';
+import axios from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const initialJobs = [
   {
@@ -55,19 +57,50 @@ const initialJobs = [
 ];
 
 const FeaturedJobs = () => {
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleTrack = (jobId) => {
-    const updatedJobs = jobs.map(job => {
-      if (job.id === jobId) {
-        const jobWithStatus = { ...job, appliedDate: new Date().toLocaleDateString(), status: 'Applied' };
-        addTrackedJob(jobWithStatus);
-        return { ...job, applied: true };
+  useEffect(() => {
+    const fetchFeaturedJobs = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/jobs?limit=3&industry=Software Development`);
+        setJobs(response.data.jobs);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching featured jobs:", error);
+        setLoading(false);
       }
-      return job;
-    });
-    setJobs(updatedJobs);
+    };
+    fetchFeaturedJobs();
+  }, []);
+
+  const router = useRouter();
+
+  const handleTrack = async (job) => {
+    try {
+      await API.post("/applications", { jobId: job.id });
+      setJobs(prev => prev.map(j => j.id === job.id ? { ...j, applied: true } : j));
+    } catch (error) {
+      if (error.response?.status === 401) {
+        router.push('/auth-success'); // Redirect to login
+      } else {
+        console.error("Tracking failed:", error);
+        alert(error.response?.data?.message || "Tracking failed");
+      }
+    }
   };
+
+  if (loading) {
+    return (
+      <section className="bg-[#0B1120] text-white py-20 px-6 md:px-20 border-t border-white/5">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="text-slate-400 font-bold animate-pulse">Loading Featured Opportunities...</div>
+        </div>
+      </section>
+    );
+  }
+
+  if (jobs.length === 0) return null;
 
   return (
     <section className="bg-[#0B1120] text-white py-20 px-6 md:px-20 relative overflow-hidden border-t border-white/5">
@@ -83,9 +116,11 @@ const FeaturedJobs = () => {
             <p className="text-slate-400 text-sm font-medium">Curated roles from vetted technology partners.</p>
           </motion.div>
 
-          <button className="px-5 py-2 rounded-lg border border-slate-700 text-slate-300 text-xs font-bold uppercase tracking-wider hover:bg-slate-800 hover:text-white transition-all">
-            View All Openings
-          </button>
+          <Link href="/jobs">
+            <button className="px-5 py-2 rounded-lg border border-slate-700 text-slate-300 text-xs font-bold uppercase tracking-wider hover:bg-slate-800 hover:text-white transition-all">
+              View All Openings
+            </button>
+          </Link>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -99,14 +134,6 @@ const FeaturedJobs = () => {
               whileHover={{ y: -4 }}
               className="glass-card p-6 rounded-2xl flex flex-col justify-between group h-full relative border border-white/5"
             >
-              <div className="absolute top-6 right-6">
-                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border ${job.platform === 'LinkedIn' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                    job.platform === 'Naukri' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                  }`}>
-                  {job.platform}
-                </span>
-              </div>
 
               <div>
                 <div className="flex items-start gap-4 mb-4">
@@ -126,26 +153,21 @@ const FeaturedJobs = () => {
                   <span className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                     {job.type}
                   </span>
-                  {job.remote && (
-                    <span className="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-md text-[10px] font-black uppercase tracking-wide">
-                      Remote
-                    </span>
-                  )}
                 </div>
               </div>
 
               <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
                 <div className="flex flex-col">
                   <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Est. Salary</span>
-                  <p className="text-base font-black text-white">{job.salary}</p>
+                  <p className="text-base font-black text-white">{job.salary || 'Competitive'}</p>
                 </div>
 
                 <button
-                  onClick={() => handleTrack(job.id)}
+                  onClick={() => handleTrack(job)}
                   disabled={job.applied}
                   className={`px-5 py-2 rounded-lg text-xs font-bold transition-all shadow-md ${job.applied
-                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-600/10'
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                    : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-indigo-600/10'
                     }`}
                 >
                   {job.applied ? 'Tracking' : 'Quick Track'}

@@ -32,6 +32,9 @@ app.use('/api/jobs', require('./routes/job.routes'));
 // Application Routes
 app.use('/api/applications', require('./routes/application.routes'));
 
+// AI Routes
+app.use('/api/ai', require('./routes/ai.routes'));
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

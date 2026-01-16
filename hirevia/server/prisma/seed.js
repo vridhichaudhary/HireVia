@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const bcrypt = require('bcryptjs');
 
 async function main() {
     console.log('Start seeding ...');
@@ -15,7 +16,7 @@ async function main() {
             data: {
                 email: companyEmail,
                 name: 'Tech Corp Recruiter',
-                password: 'password123', // In a real app, hash this!
+                password: await bcrypt.hash('password123', 10),
                 role: 'COMPANY',
                 avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
             },

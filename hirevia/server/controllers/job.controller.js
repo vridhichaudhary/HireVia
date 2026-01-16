@@ -2,12 +2,22 @@ const prisma = require('../config/prisma');
 
 exports.getJobs = async (req, res) => {
     try {
-        const { industry, seniority, techStack, minSalary, maxSalary, search } = req.query;
+        const { industry, seniority, techStack, minSalary, maxSalary, search, page = 1, limit = 10 } = req.query;
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
 
         let where = {};
 
         if (industry) where.industry = industry;
-        if (seniority) where.seniority = seniority;
+        if (seniority) {
+            // Support multiple seniority filters (array or single string)
+            if (Array.isArray(seniority)) {
+                where.seniority = { in: seniority };
+            } else {
+                where.seniority = seniority;
+            }
+        }
         if (techStack) {
             where.techStack = {
                 contains: techStack
@@ -22,24 +32,38 @@ exports.getJobs = async (req, res) => {
             ];
         }
 
-        // Simple salary filtering (assuming salary is stored or can be parsed)
-        // For now, keeping it simple as salary is currently a String in schema
-
-        const jobs = await prisma.job.findMany({
-            where,
-            orderBy: { postedAt: 'desc' },
-            include: {
-                creator: {
-                    select: {
-                        name: true,
-                        avatar: true
+        // Parallel count and findMany for performance
+        const [totalCount, jobs] = await Promise.all([
+            prisma.job.count({ where }),
+            prisma.job.findMany({
+                where,
+                skip,
+                take: limitNum,
+                orderBy: { postedAt: 'desc' },
+                include: {
+                    creator: {
+                        select: {
+                            name: true,
+                            avatar: true
+                        }
                     }
                 }
+            })
+        ]);
+
+        const totalPages = Math.ceil(totalCount / limitNum);
+
+        res.json({
+            jobs,
+            pagination: {
+                totalCount,
+                totalPages,
+                currentPage: pageNum,
+                limit: limitNum
             }
         });
-
-        res.json(jobs);
     } catch (error) {
+        console.error('getJobs error:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
