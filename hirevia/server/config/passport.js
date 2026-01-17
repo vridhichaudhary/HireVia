@@ -13,6 +13,12 @@ const jwtOptions = {
     secretOrKey: process.env.JWT_SECRET,
 };
 
+if (!process.env.JWT_SECRET) {
+    console.error("FATAL ERROR: JWT_SECRET is not defined in environment variables.");
+    console.error("Please add JWT_SECRET to your Render Environment Variables.");
+    process.exit(1); // Stop server immediately to avoid confusing stack traces
+}
+
 passport.use(
     new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
         try {

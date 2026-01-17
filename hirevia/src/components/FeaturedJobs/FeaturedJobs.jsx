@@ -63,7 +63,7 @@ const FeaturedJobs = () => {
   useEffect(() => {
     const fetchFeaturedJobs = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/jobs?limit=3&industry=Software Development`);
+        const response = await API.get('/jobs?limit=3&industry=Software Development');
         setJobs(response.data.jobs);
         setLoading(false);
       } catch (error) {

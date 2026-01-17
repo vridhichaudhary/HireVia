@@ -35,7 +35,7 @@ const AuthForm = ({ isSignup, closeModal }) => {
 
       <button
         type="button"
-        onClick={() => window.location.href = "http://localhost:8080/api/auth/google"}
+        onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/auth/google`}
         className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-semibold py-3 rounded-xl hover:bg-slate-50 transition-all hover:shadow-md"
       >
         <div className="text-xl">

@@ -194,7 +194,7 @@ const Jobs = () => {
       // Add each seniority item as a separate parameter for prisma.in support
       seniority.forEach(s => params.append('seniority', s));
 
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/jobs?${params.toString()}`);
+      const response = await API.get(`/jobs?${params.toString()}`);
 
       const { jobs: fetchedJobs, pagination: pg } = response.data;
       setJobs(fetchedJobs);
