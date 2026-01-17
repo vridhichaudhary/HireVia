@@ -142,15 +142,26 @@ async function main() {
         }
     ];
 
-    // 3. Insert Jobs
+    // 3. Insert Jobs safely
     for (const job of jobsData) {
-        const createdJob = await prisma.job.create({
-            data: {
-                ...job,
-                creatorId: companyUser.id,
-            },
+        const existingJob = await prisma.job.findFirst({
+            where: {
+                title: job.title,
+                company: job.company
+            }
         });
-        console.log(`Created job: ${createdJob.title} at ${createdJob.company}`);
+
+        if (!existingJob) {
+            const createdJob = await prisma.job.create({
+                data: {
+                    ...job,
+                    creatorId: companyUser.id,
+                },
+            });
+            console.log(`Created job: ${createdJob.title} at ${createdJob.company}`);
+        } else {
+            console.log(`Job already exists: ${job.title} at ${job.company}`);
+        }
     }
 
     console.log('Seeding finished.');
