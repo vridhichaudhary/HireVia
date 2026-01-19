@@ -156,5 +156,39 @@ All APIs are prefixed with `/api`
 
 ---
 
-## Project Structure
 
+## How to Run Locally
+
+### Prerequisites
+- Node.js v18+
+- MySQL database
+
+### Installation
+```bash
+git clone https://github.com/your-username/hirevia.git
+cd hirevia
+npm install
+
+Environment Variables
+
+Create a .env file:
+
+DATABASE_URL=mysql://user:password@host:port/db
+JWT_SECRET=your_jwt_secret
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GEMINI_API_KEY=your_gemini_api_key
+
+Database Setup
+npx prisma generate
+npx prisma migrate dev
+
+Run Development Servers
+# Frontend
+npm run dev
+
+# Backend
+npm run server
+
+
+Open http://localhost:3000
