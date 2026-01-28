@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,8 +17,9 @@ model User {
   role         Role          @default(USER)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+
   applications Application[]
-  jobs         Job[]         @relation("UserJobs")
+  jobs         Job[]
 }
 
 model Job {
@@ -28,21 +29,24 @@ model Job {
   location     String
   type         String
   remote       Boolean       @default(false)
-  description  String        @db.LongText
-  requirements String        @db.LongText
+  description  String
+  requirements String
   salary       String?
   platform     String?
   techStack    String?
   industry     String?
   seniority    String?
   postedAt     DateTime      @default(now())
+
   creatorId    String
+  creator      User          @relation(fields: [creatorId], references: [id])
+
   externalId   String?       @unique
   applyUrl     String?
-  applications Application[]
-  creator      User          @relation("UserJobs", fields: [creatorId], references: [id])
 
-  @@index([creatorId], map: "Job_creatorId_fkey")
+  applications Application[]
+
+  @@index([creatorId])
 }
 
 model Application {
@@ -52,11 +56,12 @@ model Application {
   status    String   @default("Applied")
   appliedAt DateTime @default(now())
   resumeUrl String?
-  job       Job      @relation(fields: [jobId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+
+  job  Job  @relation(fields: [jobId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([jobId, userId])
-  @@index([userId], map: "Application_userId_fkey")
+  @@index([userId])
 }
 
 enum Role {
