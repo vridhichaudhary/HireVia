@@ -395,13 +395,13 @@ const Jobs = () => {
                       {companyName(job)[0]}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-black text-lg text-slate-900 group-hover:text-blue-700 transition-colors truncate pr-8">{job.title}</h3>
-                          <p className="text-sm font-bold text-slate-500">{companyName(job)}</p>
+                      <div className="flex justify-between items-start mb-2 gap-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-black text-lg text-slate-900 group-hover:text-blue-700 transition-colors truncate">{job.title}</h3>
+                          <p className="text-sm font-bold text-slate-500 truncate">{companyName(job)}</p>
                         </div>
                         {/* Status / Date or Bookmark */}
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-50 text-slate-500 px-2 py-1 rounded-md">{job.type}</span>
+                        <span className="flex-shrink-0 text-[10px] font-bold uppercase tracking-wider bg-slate-50 text-slate-500 px-2 py-1 rounded-md">{job.type}</span>
                       </div>
 
                       <div className="flex items-center gap-5 text-xs text-slate-500 font-bold mt-4 mb-5">

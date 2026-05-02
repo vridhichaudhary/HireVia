@@ -1,27 +1,12 @@
 const axios = require('axios');
 const prisma = require('../config/prisma');
 
-const REMOTIVE_CATEGORIES = [
-    'software-dev',
-    'customer-support',
-    'design',
-    'marketing',
-    'sales',
-    'product',
-    'business',
-    'data',
-    'devops',
-    'writing',
-    'finance-legal',
-    'hr'
-];
-
-// Adzuna API (Requires credentials in .env)
+// Adzuna API (Optional — requires credentials in .env)
 const ADZUNA_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_KEY = process.env.ADZUNA_APP_KEY;
 const ADZUNA_API_URL = (country) => `https://api.adzuna.com/v1/api/jobs/${country}/search/1`;
 
-// Jooble API (Requires key in .env)
+// Jooble API (Optional — requires key in .env)
 const JOOBLE_KEY = process.env.JOOBLE_API_KEY;
 const JOOBLE_API_URL = `https://jooble.org/api/${JOOBLE_KEY}`;
 
@@ -45,32 +30,35 @@ exports.fetchAndSyncJobs = async () => {
 
         let totalSynced = 0;
 
-        // 2. Fetch from Remotive (Multiple Categories)
-        console.log('Syncing from Remotive categories...');
-        for (const category of REMOTIVE_CATEGORIES) {
-            try {
-                const url = `https://remotive.com/api/remote-jobs?category=${category}&limit=25`;
+        // 2. Fetch from Arbeitnow (free, no API key needed, real apply URLs)
+        console.log('Syncing from Arbeitnow...');
+        try {
+            // Fetch multiple pages for more coverage
+            for (let page = 1; page <= 4; page++) {
+                const url = `https://www.arbeitnow.com/api/job-board-api?page=${page}`;
                 const response = await axios.get(url);
-                const jobs = response.data.jobs || [];
+                const jobs = response.data.data || [];
+
+                if (jobs.length === 0) break;
 
                 for (const job of jobs) {
-                    const externalId = `remotive-${job.id}`;
+                    const externalId = `arbeitnow-${job.slug}`;
                     const jobData = {
-                        title: job.title,
+                        title: job.title.replace(/<\/?[^>]+(>|$)/g, ""),
                         company: job.company_name,
-                        location: job.candidate_required_location || 'Remote',
-                        type: job.job_type || 'Full-time',
-                        remote: true,
+                        location: job.location || 'Remote',
+                        type: job.job_types && job.job_types.length > 0 ? job.job_types[0] : 'Full-time',
+                        remote: job.remote || false,
                         description: job.description,
-                        requirements: 'See description for details.',
-                        salary: job.salary || null,
-                        platform: 'Remotive',
-                        techStack: job.tags ? job.tags.join(', ').substring(0, 191) : '',
-                        industry: job.category || category,
+                        requirements: 'See original post for requirements.',
+                        salary: null,
+                        platform: 'Arbeitnow',
+                        techStack: job.tags ? job.tags.slice(0, 8).join(', ').substring(0, 191) : '',
+                        industry: 'Tech',
                         seniority: 'Mid-Senior',
                         externalId: externalId,
                         applyUrl: job.url,
-                        postedAt: new Date(job.publication_date),
+                        postedAt: new Date(job.created_at * 1000),
                         creatorId: systemUser.id
                     };
 
@@ -81,13 +69,13 @@ exports.fetchAndSyncJobs = async () => {
                     });
                     totalSynced++;
                 }
-                console.log(`Synced ${jobs.length} jobs from Remotive category: ${category}`);
-            } catch (err) {
-                console.error(`Error syncing Remotive category ${category}:`, err.message);
+                console.log(`Synced ${jobs.length} jobs from Arbeitnow page ${page}`);
             }
+        } catch (err) {
+            console.error(`Error syncing Arbeitnow:`, err.message);
         }
 
-        // 4. Fetch from Adzuna (Focus on India)
+        // 3. Fetch from Adzuna (optional — only if credentials are provided)
         if (ADZUNA_ID && ADZUNA_KEY) {
             console.log('Syncing from Adzuna (India)...');
             try {
@@ -137,7 +125,7 @@ exports.fetchAndSyncJobs = async () => {
             }
         }
 
-        // 5. Fetch from Jooble
+        // 4. Fetch from Jooble (optional — only if key is provided)
         if (JOOBLE_KEY) {
             console.log('Syncing from Jooble...');
             try {
