@@ -6,10 +6,6 @@ const ADZUNA_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_KEY = process.env.ADZUNA_APP_KEY;
 const ADZUNA_API_URL = (country) => `https://api.adzuna.com/v1/api/jobs/${country}/search/1`;
 
-// Jooble API (Optional — requires key in .env)
-const JOOBLE_KEY = process.env.JOOBLE_API_KEY;
-const JOOBLE_API_URL = `https://jooble.org/api/${JOOBLE_KEY}`;
-
 exports.fetchAndSyncJobs = async () => {
     try {
         console.log('Starting multi-source job sync...');
@@ -30,52 +26,102 @@ exports.fetchAndSyncJobs = async () => {
 
         let totalSynced = 0;
 
-        // 2. Fetch from Arbeitnow (free, no API key needed, real apply URLs)
-        console.log('Syncing from Arbeitnow...');
-        try {
-            // Fetch multiple pages for more coverage
-            for (let page = 1; page <= 4; page++) {
-                const url = `https://www.arbeitnow.com/api/job-board-api?page=${page}`;
+        // ─── SOURCE 1: Jobicy ─────────────────────────────────────────────
+        // Free, no API key, English-only, real-time remote jobs
+        console.log('Syncing from Jobicy...');
+        const JOBICY_INDUSTRIES = ['engineering', 'design', 'marketing', 'management', 'writing', 'business', 'customer-support', 'data'];
+        for (const industry of JOBICY_INDUSTRIES) {
+            try {
+                const url = `https://jobicy.com/api/v2/remote-jobs?count=50&industry=${industry}`;
                 const response = await axios.get(url);
-                const jobs = response.data.data || [];
-
-                if (jobs.length === 0) break;
+                const jobs = response.data.jobs || [];
 
                 for (const job of jobs) {
-                    const externalId = `arbeitnow-${job.slug}`;
+                    const externalId = `jobicy-${job.id}`;
+                    const salary = job.salaryMin
+                        ? `${job.salaryCurrency || '$'}${job.salaryMin?.toLocaleString()} - ${job.salaryCurrency || '$'}${job.salaryMax?.toLocaleString()} / ${job.salaryPeriod || 'year'}`
+                        : null;
+
                     const jobData = {
-                        title: job.title.replace(/<\/?[^>]+(>|$)/g, ""),
-                        company: job.company_name,
-                        location: job.location || 'Remote',
-                        type: job.job_types && job.job_types.length > 0 ? job.job_types[0] : 'Full-time',
-                        remote: job.remote || false,
-                        description: job.description,
-                        requirements: 'See original post for requirements.',
-                        salary: null,
-                        platform: 'Arbeitnow',
-                        techStack: job.tags ? job.tags.slice(0, 8).join(', ').substring(0, 191) : '',
-                        industry: 'Tech',
-                        seniority: 'Mid-Senior',
-                        externalId: externalId,
-                        applyUrl: job.url,
-                        postedAt: new Date(job.created_at * 1000),
+                        title: job.jobTitle,
+                        company: job.companyName,
+                        location: job.jobGeo || 'Remote',
+                        type: Array.isArray(job.jobType) ? job.jobType[0] : (job.jobType || 'Full-time'),
+                        remote: true,
+                        description: job.jobDescription || job.jobExcerpt || '',
+                        requirements: 'See original post for full requirements.',
+                        salary,
+                        platform: 'Jobicy',
+                        techStack: '',
+                        industry: Array.isArray(job.jobIndustry) ? job.jobIndustry[0] : (job.jobIndustry || industry),
+                        seniority: job.jobLevel || 'Mid-Senior',
+                        externalId,
+                        applyUrl: job.url, // direct jobicy link
+                        postedAt: new Date(job.pubDate),
                         creatorId: systemUser.id
                     };
 
                     await prisma.job.upsert({
-                        where: { externalId: externalId },
+                        where: { externalId },
                         update: jobData,
                         create: jobData
                     });
                     totalSynced++;
                 }
-                console.log(`Synced ${jobs.length} jobs from Arbeitnow page ${page}`);
+                console.log(`Synced ${jobs.length} jobs from Jobicy [${industry}]`);
+            } catch (err) {
+                console.error(`Error syncing Jobicy [${industry}]:`, err.message);
             }
-        } catch (err) {
-            console.error(`Error syncing Arbeitnow:`, err.message);
         }
 
-        // 3. Fetch from Adzuna (optional — only if credentials are provided)
+        // ─── SOURCE 2: Remote OK ──────────────────────────────────────────
+        // Free, no API key, English-only, real-time remote tech jobs
+        console.log('Syncing from Remote OK...');
+        try {
+            const response = await axios.get('https://remoteok.com/api', {
+                headers: { 'User-Agent': 'HireVia Job Aggregator (contact: admin@hirevia.com)' }
+            });
+            // First element is a legal notice object — skip it
+            const jobs = (response.data || []).filter(j => j.id && j.position);
+
+            for (const job of jobs) {
+                const externalId = `remoteok-${job.id}`;
+                const salary = job.salary_min
+                    ? `$${Number(job.salary_min).toLocaleString()} - $${Number(job.salary_max).toLocaleString()}`
+                    : null;
+
+                const jobData = {
+                    title: job.position,
+                    company: job.company,
+                    location: 'Remote',
+                    type: 'Full-time',
+                    remote: true,
+                    description: job.description || '',
+                    requirements: 'See original post for full requirements.',
+                    salary,
+                    platform: 'Remote OK',
+                    techStack: job.tags ? job.tags.slice(0, 8).join(', ').substring(0, 191) : '',
+                    industry: 'Tech',
+                    seniority: 'Mid-Senior',
+                    externalId,
+                    applyUrl: job.apply_url || job.url,
+                    postedAt: new Date(job.epoch * 1000),
+                    creatorId: systemUser.id
+                };
+
+                await prisma.job.upsert({
+                    where: { externalId },
+                    update: jobData,
+                    create: jobData
+                });
+                totalSynced++;
+            }
+            console.log(`Synced ${jobs.length} jobs from Remote OK`);
+        } catch (err) {
+            console.error('Error syncing Remote OK:', err.message);
+        }
+
+        // ─── SOURCE 3: Adzuna (optional) ─────────────────────────────────
         if (ADZUNA_ID && ADZUNA_KEY) {
             console.log('Syncing from Adzuna (India)...');
             try {
@@ -93,27 +139,26 @@ exports.fetchAndSyncJobs = async () => {
                 for (const job of jobs) {
                     const externalId = `adzuna-${job.id}`;
                     const jobData = {
-                        title: job.title.replace(/<\/?[^>]+(>|$)/g, ""),
+                        title: job.title.replace(/<\/?[^>]+(>|$)/g, ''),
                         company: job.company?.display_name || 'Unknown',
                         location: job.location?.display_name || 'India',
                         type: job.contract_type || 'Full-time',
-                        remote: job.title.toLowerCase().includes('remote') || false,
+                        remote: job.title.toLowerCase().includes('remote'),
                         description: job.description,
                         requirements: 'See original post for requirements.',
                         salary: job.salary_min ? `₹${job.salary_min} - ₹${job.salary_max}` : null,
-                        platform: job.redirect_url.includes('indeed') ? 'Indeed' :
-                            job.redirect_url.includes('naukri') ? 'Naukri' : 'Adzuna',
+                        platform: 'Adzuna',
                         techStack: '',
                         industry: job.category?.label || 'Tech',
                         seniority: 'Mid-Senior',
-                        externalId: externalId,
+                        externalId,
                         applyUrl: job.redirect_url,
                         postedAt: new Date(job.created),
                         creatorId: systemUser.id
                     };
 
                     await prisma.job.upsert({
-                        where: { externalId: externalId },
+                        where: { externalId },
                         update: jobData,
                         create: jobData
                     });
@@ -122,51 +167,6 @@ exports.fetchAndSyncJobs = async () => {
                 console.log(`Synced ${jobs.length} jobs from Adzuna.`);
             } catch (err) {
                 console.error('Error syncing from Adzuna:', err.message);
-            }
-        }
-
-        // 4. Fetch from Jooble (optional — only if key is provided)
-        if (JOOBLE_KEY) {
-            console.log('Syncing from Jooble...');
-            try {
-                const response = await axios.post(JOOBLE_API_URL, {
-                    keywords: 'software engineer',
-                    location: 'India',
-                    page: 1
-                });
-                const jobs = response.data.jobs || [];
-
-                for (const job of jobs) {
-                    const externalId = `jooble-${job.id}`;
-                    const jobData = {
-                        title: job.title,
-                        company: job.company || 'Unknown',
-                        location: job.location || 'Remote',
-                        type: job.type || 'Full-time',
-                        remote: job.location?.toLowerCase().includes('remote') || false,
-                        description: job.snippet,
-                        requirements: 'See original post for requirements.',
-                        salary: job.salary || null,
-                        platform: job.source || 'Jooble',
-                        techStack: '',
-                        industry: 'General',
-                        seniority: 'Mid-Senior',
-                        externalId: externalId,
-                        applyUrl: job.link,
-                        postedAt: new Date(job.updated),
-                        creatorId: systemUser.id
-                    };
-
-                    await prisma.job.upsert({
-                        where: { externalId: externalId },
-                        update: jobData,
-                        create: jobData
-                    });
-                    totalSynced++;
-                }
-                console.log(`Synced ${jobs.length} jobs from Jooble.`);
-            } catch (err) {
-                console.error('Error syncing from Jooble:', err.message);
             }
         }
 
